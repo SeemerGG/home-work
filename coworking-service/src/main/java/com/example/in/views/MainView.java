@@ -11,7 +11,10 @@ import com.example.in.controllers.MainController;
 import com.example.model.Place;
 import com.example.model.Reservation;
 
-
+/**
+ * Класс представления основного интерфейса пользователя.
+ * Обеспечивает взаимодействие с пользователем через консоль и делегирует действия контроллеру.
+ */
 public class MainView {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -19,15 +22,27 @@ public class MainView {
     private MainController mainController;
     private Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Конструктор класса представления.
+     * @param mainController Контроллер основного интерфейса, с которым представление будет взаимодействовать.
+     */
     public MainView(MainController mainController) {
         this.mainController = mainController;
     }
 
+    /**
+     * Запускает интерфейс пользователя.
+     * @param login Логин пользователя, приветствующего его при входе в систему.
+     */
     public void run(String login) {
         System.out.println("Здравствуйте " + login);
         switchAction();
     }
 
+    /**
+     * Отображает меню команд и обрабатывает ввод пользователя.
+     * Позволяет пользователю выбрать действие и делегирует выполнение контроллеру.
+     */
     private void switchAction() {
         String str = new String();
         while (true) {
@@ -67,6 +82,10 @@ public class MainView {
         
     }
 
+    /**
+     * Обрабатывает действия, связанные с бронированием.
+     * Позволяет пользователю обновить или удалить бронирование, а также отфильтровать список бронирований.
+     */
     public void reservAction() {
         String str = new String();
         mainController.reservOut();
@@ -123,10 +142,10 @@ public class MainView {
                             }
                             break;
                         case "date":
-                            System.out.println("Введите дату в формате dd.MM.yyyy:");
+                            //System.out.println("Введите дату в формате dd.MM.yyyy:");
                             try {
-                                LocalDate date = LocalDate.parse(scanner.nextLine(), formatter);
-                                mainController.filterForDate(date);
+                                //LocalDate date = LocalDate.parse(scanner.nextLine(), formatter);
+                                mainController.filterForDate();
                             } catch (Exception e) {
                                 sayError(e.getMessage());
                             }
@@ -151,6 +170,11 @@ public class MainView {
     }
     
 
+    /**
+     * Обрабатывает действия, связанные с управлением местами пользователя.
+     * Позволяет пользователю добавить или удалить место из списка его мест.
+     * @param myPlaces Список мест, принадлежащих пользователю.
+     */
     public void myPlaceAction(List<Place> myPlaces) {
         String command = new String();
         printList(myPlaces);
@@ -201,6 +225,11 @@ public class MainView {
         }
     }
     
+    /**
+     * Обрабатывает действия бронирования места, на день указаный после команды searchDay главного меню.
+     * Позволяет пользователю забронировать место, указав ID и желаемый временной интервал.
+     * @param reservationByPlace Словарь где ключем выступает id места, а значением лист записей на это место.
+     */
     public void reservation(Map<Integer, List<Reservation>> reservationByPlace) {
         String str = new String();
         while(true) {
@@ -235,6 +264,10 @@ public class MainView {
         }
     }
 
+    /**
+     * Выводит список мест в консоль.
+     * @param list Список мест для вывода.
+     */
     public void printList(List<Place> list) {
         StringBuilder sb = new StringBuilder();
 
@@ -246,10 +279,19 @@ public class MainView {
         System.out.println(sb.toString());
     }
 
+    /**
+     * Выводит строку в консоль.
+     * @param str Строка для вывода.
+     */
     public void print(String str) {
         System.out.println(str);
     }
 
+    /**
+     * Отображает сообщение об ошибке.
+     * Информирует пользователя о возникшей ошибке и предлагает повторить попытку.
+     * @param errorMessage Сообщение об ошибке для отображения пользователю.
+     */
     public void sayError(String errorMessage) {
         System.out.println("Произошла ошибка: ");
         System.out.println(errorMessage);

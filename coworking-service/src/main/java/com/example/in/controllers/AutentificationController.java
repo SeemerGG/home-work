@@ -10,17 +10,36 @@ import com.example.out.dao.ReservationDAO;
 import com.example.out.dao.UserDAO;
 import com.example.out.dao.WorkPlaceDAO;
 
+/**
+ * Класс AutentificationController управляет процессом аутентификации пользователя.
+ */
 public class AutentificationController {
     private AutentificationView view;
     private UserDAO userDAO;
     private MainController mainController;
 
+    /**
+     * Конструктор класса AutentificationController.
+     * @param userDAO DAO для доступа к данным пользователей.
+     */
     public AutentificationController(UserDAO userDAO) {
         this.view = new AutentificationView(this);
         this.userDAO = userDAO;
+    }
+
+    /**
+     * Метод запуска основного цикла приложения.
+     */
+    public void appRun() {
         this.view.run();
     }
 
+    /**
+     * Метод для авторизации пользователя.
+     * @param login Логин пользователя.
+     * @param password Пароль пользователя.
+     * @throws NoSuchAlgorithmException Если алгоритм хеширования не поддерживается.
+     */
     public void authorization(String login, String password) throws NoSuchAlgorithmException {
         User user = userDAO.getUser(login);
         try {
@@ -41,6 +60,12 @@ public class AutentificationController {
         }
     }
 
+     /**
+     * Метод для регистрации нового пользователя.
+     * @param login Логин нового пользователя.
+     * @param password Пароль нового пользователя.
+     * @throws NoSuchAlgorithmException Если алгоритм хеширования не поддерживается.
+     */
     public void registration(String login, String password) throws NoSuchAlgorithmException {
         try {
             String hashPassword = PasswordHashing.getPasswordHash(password);

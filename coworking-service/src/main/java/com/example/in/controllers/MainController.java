@@ -20,6 +20,10 @@ import com.example.out.dao.ConferenceRoomDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.out.dao.WorkPlaceDAO;
 
+/**
+ * Контроллер основного интерфейса приложения, управляющий взаимодействием пользователя с системой бронирования.
+ * Этот класс содержит логику для поиска и бронирования рабочих мест и конференц-залов, а также добавления и редактирования этих мест.
+ */
 public class MainController {
 
     private String currUserLogin;
@@ -33,6 +37,13 @@ public class MainController {
     private LocalTime closeTime = LocalTime.of(22, 0);
 
 
+    /**
+     * Конструктор класса.
+     * @param currUserLogin Логин аутентифицированного пользователя.
+     * @param workPlaceDAO DAO для работы с рабочими местами.
+     * @param conferenceRoomDAO DAO для работы с конференц-залами.
+     * @param reservationDAO DAO для работы с бронированиями.
+     */
     public MainController(String currUserLogin,
     WorkPlaceDAO workPlaceDAO, ConferenceRoomDAO conferenceRoomDAO, 
     ReservationDAO reservationDAO) {
@@ -42,17 +53,30 @@ public class MainController {
         this.reservationDAO = reservationDAO;
     }
 
+    /**
+     * Метод вызываемый после авторизации пользователя для запуска основного интерфейса.
+     * @param currUserLogin Логин авторизованного пользователя.
+     */
     public void authorized(String currUserLogin) {
         this.currUserLogin = currUserLogin;
         mainView.run(this.currUserLogin);
     }
 
+    /**
+     * Метод поиска всех мест.
+     * Получает список всех рабочих мест и конференц-залов без учета их занятости и выводит его в представление.
+     */
     public void search() {
         List<Place> places = listAllPlaces();
 
         mainView.printList(places);
     }
 
+    /**
+     * Метод поиска мест на определенную дату.
+     * Фильтрует бронирования по дате и выводит список мест с доступными временными интервалами.
+     * @param date Дата, на которую осуществляется поиск.
+     */
     public void searchDay(LocalDate date) {
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
 
@@ -87,7 +111,15 @@ public class MainController {
         mainView.reservation(reservationsByPlace);
     }
 
-    //Проверяет дату и резервирует если может
+     /**
+     * Метод бронирования места.
+     * Проверяет доступность места и осуществляет бронирование, если это возможно.
+     * Словарь содержит элементы свободные на дату выбранную в методе searchDay.
+     * @param reservationByPlace Словарь где ключем выступает id места, а значением лист записей на это место.
+     * @param idPlace Идентификатор места для бронирования.
+     * @param starTime Время начала бронирования.
+     * @param endTime Время окончания бронирования.
+     */
     public void reservating(Map<Integer, List<Reservation>> reservationByPlace, Integer idPlace, LocalTime starTime, LocalTime endTime) {
         if(reservationByPlace.containsKey(idPlace)) {
             for(Reservation reserv : reservationByPlace.get(idPlace)) {
@@ -107,13 +139,21 @@ public class MainController {
         }
     }
 
+    /**
+     * Вспомогательный метод для генерации списка всех интервалов времени между временем открытия и закрытия офиса (8:00-22:00).
+     * Создает список временных интервалов.
+     * @return Список интервалов времени.
+     */
     private List<LocalTime> generatingAllTimeInterval() {
         return IntStream.range(openTime.toSecondOfDay(), closeTime.toSecondOfDay())
                     .filter(i -> i % 1800 == 0)
                     .mapToObj(i -> LocalTime.ofSecondOfDay(i))
                     .collect(Collectors.toList());
     }
-
+    /**
+     * Метод возвращающий все места зарегистрированные в системе.
+     * @return Список всех мест зарегистрированных в системе.
+     */
     private List<Place> listAllPlaces() {
         List<Place> places = new ArrayList<>();
         places.addAll(workPlaceDAO.getPlaces());
@@ -121,11 +161,18 @@ public class MainController {
         return places;
     }
 
+    /**
+     * Метод ищет все места зарегистрированные на логин текущего пользователя и передает их представлению для вывода.
+     */
     public void myPublication() {
         List<Place> places = listAllPlaces().stream().filter(p -> p.getLoginOwner().equals(currUserLogin)).toList();
         mainView.myPlaceAction(places);
     }
 
+    /**
+     * Метод удаляет место с указанным id, а также все записи с указаным местом.
+     * @param id Идентификационный номер места, которое надо удалить.
+     */
     public void deleteMyPlace(int id) {
         try {
             reservationDAO.deleteElementForPlaceId(id);
@@ -142,16 +189,32 @@ public class MainController {
         }
     }
 
+    /**
+     * Создает новое рабочее место для текущего пользователя.
+     * Добавляет рабочее место в базу данных и обновляет представление.
+     */
     public void createMyPlace() {
         workPlaceDAO.addWorkPlace(currUserLogin);
         mainView.print("Добавление завершено!");
     }
 
+    /**
+     * Создает новый конференц-зал для текущего пользователя.
+     * Добавляет конференц-зал с указанным количеством мест в систему и обновляет представление.
+     * @param seats Количество мест в новом конференц-зале.
+     */
     public void createMyPlace(int seats) {
         conferenceRoomDAO.addConferenseRoom(currUserLogin, seats);
         mainView.print("Добавление завершено!");
     }
 
+    /**
+     * Обновляет время бронирования для указанного идентификатора.
+     * Проверяет наличие конфликтов с существующими бронированиями и обновляет время, если это возможно.
+     * @param id Идентификатор бронирования для обновления.
+     * @param startTime Новое время начала бронирования.
+     * @param endTime Новое время окончания бронирования.
+     */
     public void updateTime(int id, LocalTime startTime, LocalTime endTime) {
         Reservation reservation = reservationDAO.getReservation(id);
         try {
@@ -178,6 +241,11 @@ public class MainController {
         }
     }
 
+
+    /**
+     * Генерирует список всех бронирований текущего пользователя ввиде строки.
+     * Передает полученную строку в представление для отображения.
+     */
     public void reservOut() {
         List<Reservation> list = reservationDAO.getReservations().stream().filter(res -> res.getClientLogin() == currUserLogin).toList();
         StringBuilder sb = new StringBuilder();
@@ -188,6 +256,11 @@ public class MainController {
         mainView.print(sb.toString());
     }
 
+    /**
+     * Удаляет бронирование по его идентификатору.
+     * Удаляет бронирование из системы и обновляет представление.
+     * @param id Идентификатор бронирования для удаления.
+     */
     public void deleteReservaton(int id) {
         try {
             reservationDAO.delete(id);
@@ -196,6 +269,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Фильтрует бронирования по типу места.
+     * Передает представлению список бронирований, соответствующих указанному типу места, для отображения.
+     * @param param Тип места для фильтрации ('conference' или 'work').
+     */
     public void filterForType(String param) {
         List<Reservation> list = reservationDAO.getReservations().stream()
                         .filter(res -> res.getClientLogin() == currUserLogin)
@@ -213,7 +291,11 @@ public class MainController {
         reservOut(list);
     }
 
-    public void filterForDate(LocalDate date) {
+    /**
+     * Фильтрует бронирования по дате.
+     * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
+     */
+    public void filterForDate() {
         List<Reservation> list = reservationDAO.getReservations().stream()
                         .filter(res -> res.getClientLogin() == currUserLogin)
                         .toList();
@@ -221,6 +303,10 @@ public class MainController {
         reservOut(list);
     }
 
+    /**
+     * Фильтрует бронирования по владельцу места.
+     * Сортирует и передает представлению список бронирований пользователя по владельцу места.
+     */
     public void filterForOwner() {
         List<Reservation> list = reservationDAO.getReservations().stream()
             .filter(res -> res.getClientLogin() == currUserLogin)
@@ -229,6 +315,11 @@ public class MainController {
         reservOut(list);
     }
 
+    /**
+     * Выводит список бронирований.
+     * Принимает список бронирований и передает его представлению для вывода пользователю.
+     * @param list Список бронирований для вывода.
+     */
     public void reservOut(List<Reservation> list) {
         StringBuilder sb = new StringBuilder();
         for(Reservation res : list) {
