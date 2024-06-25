@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.model.Place;
+import com.example.model.PlaceType;
 import com.example.model.Reservation;
 
 /**
@@ -88,4 +89,47 @@ public class ReservationDAO {
     public void delete(int id) {
         list.removeIf(res -> res.getId() == id);
     }
+
+    /**
+     * Метод получения записей на конкретный день.
+     * @param date Денью
+     * @return Список записей на указаный день.
+     */
+    public List<Reservation> getReservationsForDate(LocalDate date) {
+        return list.stream().filter(res -> res.getDate().isEqual(date)).toList();
+    }
+
+    /**
+     * Метод получения записей на конкретное место.
+     * @param idPlace Идентификатор места.
+     * @return Список записей на указаное место.
+     */
+    public List<Reservation> getReservationsForPlace(int idPlace) { 
+        return list.stream().filter(res -> res.getPlace().getId() == idPlace).toList();
+    }
+
+    /**
+     * Метод получения записей одного пользователя.
+     * @param login Логин пользователя.
+     * @return Список записей указанного пользователя.
+     */
+    public List<Reservation> getReservationsForLogin(String login) { 
+        return list.stream().filter(res -> res.getClientLogin().equals(login)).toList();
+    }
+
+    /**
+     * Метод получения записей по указанному типу места.
+     * @param Type Тип места.
+     * @return Список записей указанного типа.
+     */
+    public List<Reservation> getReservationsForType(PlaceType Type) { 
+        if(Type == PlaceType.CONFERENCEROOM) {
+            return list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
+        }
+        if(Type == PlaceType.WORKPLACE) {
+            return list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
+        }
+        return null;
+    }
+    
 }

@@ -72,9 +72,7 @@ public class MainController {
 
         List<Place> places = placeDAO.getPlaces();
 
-        List<Reservation> reservations = reservationDAO.getReservations();
-
-        Stream<Reservation> stream = reservations.stream().filter(res -> res.getDate().isEqual(date));
+        Stream<Reservation> stream = reservationDAO.getReservationsForDate(date).stream();
         Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlace().getId()));
         reservationsByPlace.forEach((placeId, resList) -> {
             // Создание полного списка интервалов времени открытия до закрытия
@@ -208,8 +206,8 @@ public class MainController {
                 throw new Exception("Неверный ID!");
             }
             else {
-                List<Reservation> listReserv = reservationDAO.getReservations().stream().filter(res -> 
-                (res.getPlace().getId() == reservation.getPlace().getId())&&(res.getDate().isEqual(reservation.getDate()))).toList();
+                List<Reservation> listReserv = reservationDAO.getReservationsForDate(reservation.getDate()).stream().filter(res -> 
+                res.getPlace().getId() == reservation.getPlace().getId()).toList();
                 listReserv.remove(id);
                 for(Reservation reserv : listReserv) {
                     if(!reserv.getStartTime().isAfter(startTime) && 
@@ -233,7 +231,7 @@ public class MainController {
      * Передает полученную строку в представление для отображения.
      */
     public void reservOut() {
-        List<Reservation> list = reservationDAO.getReservations().stream().filter(res -> res.getClientLogin() == currUserLogin).toList();
+        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
         StringBuilder sb = new StringBuilder();
         for(Reservation res : list) {
             sb.append(res.toString());
@@ -261,20 +259,12 @@ public class MainController {
      * @param param Тип места для фильтрации ('conference' или 'work').
      */
     public void filterForType(String param) {
-        List<Reservation> list = reservationDAO.getReservations().stream()
-                        .filter(res -> res.getClientLogin() == currUserLogin)
-                        .toList();
-        switch (param) {
-            case "conference":
-                list = list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
-                reservOut(list);
-                break;
-            case "work":
-                list = list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
-                reservOut(list);
-                break;
+        if(param.equals("conference")) {
+            reservOut(reservationDAO.getReservationsForType(PlaceType.CONFERENCEROOM));
         }
-        reservOut(list);
+        else if(param.equals("work")) {
+            reservOut(reservationDAO.getReservationsForType(PlaceType.WORKPLACE));
+        }
     }
 
     /**
@@ -282,9 +272,7 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
     public void filterForDate() {
-        List<Reservation> list = reservationDAO.getReservations().stream()
-                        .filter(res -> res.getClientLogin() == currUserLogin)
-                        .toList();
+        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
         Collections.sort(list, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
         reservOut(list);
     }
@@ -294,9 +282,7 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
     public void filterForOwner() {
-        List<Reservation> list = reservationDAO.getReservations().stream()
-            .filter(res -> res.getClientLogin() == currUserLogin)
-            .toList();
+        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
         Collections.sort(list, (obj1, obj2) -> obj1.getPlace().getLoginOwner().compareTo(obj2.getPlace().getLoginOwner()));
         reservOut(list);
     }
