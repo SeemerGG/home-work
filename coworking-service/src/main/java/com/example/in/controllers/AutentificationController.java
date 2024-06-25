@@ -5,10 +5,9 @@ import java.security.NoSuchAlgorithmException;
 import com.example.in.security.PasswordHashing;
 import com.example.in.views.AutentificationView;
 import com.example.model.User;
-import com.example.out.dao.ConferenceRoomDAO;
+import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.out.dao.UserDAO;
-import com.example.out.dao.WorkPlaceDAO;
 
 /**
  * Класс AutentificationController управляет процессом аутентификации пользователя.
@@ -45,7 +44,7 @@ public class AutentificationController {
         try {
             if(user != null) {
                 if(PasswordHashing.compareHashAndString(user.getPassword(), password)) {
-                    mainController = new MainController(login, new WorkPlaceDAO(), new ConferenceRoomDAO(), new ReservationDAO());
+                    mainController = new MainController(login, new PlaceDAO(), new ReservationDAO());
                     mainController.authorized(login);
                 }
                 else {
@@ -70,7 +69,7 @@ public class AutentificationController {
         try {
             String hashPassword = PasswordHashing.getPasswordHash(password);
             userDAO.addUser(login, hashPassword);
-            mainController = new MainController(login, new WorkPlaceDAO(), new ConferenceRoomDAO(), new ReservationDAO());
+            mainController = new MainController(login, new PlaceDAO(), new ReservationDAO());
             mainController.authorized(login);
         }
         catch(Exception e)

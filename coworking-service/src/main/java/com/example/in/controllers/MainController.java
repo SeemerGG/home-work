@@ -4,7 +4,6 @@ import com.example.in.views.MainView;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.example.model.ConferenceRoom;
 import com.example.model.Place;
 import com.example.model.PlaceType;
 import com.example.model.Reservation;
-import com.example.out.dao.ConferenceRoomDAO;
+import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
-import com.example.out.dao.WorkPlaceDAO;
 
 /**
  * Контроллер основного интерфейса приложения, управляющий взаимодействием пользователя с системой бронирования.
@@ -28,9 +25,8 @@ public class MainController {
 
     private String currUserLogin;
     private MainView mainView;
-    private WorkPlaceDAO workPlaceDAO;
     private ReservationDAO reservationDAO;
-    private ConferenceRoomDAO conferenceRoomDAO;
+    private PlaceDAO placeDAO;
 
     //Это наверное  должно быть в классе с константами приложения
     private LocalTime openTime = LocalTime.of(8, 0);
@@ -40,16 +36,12 @@ public class MainController {
     /**
      * Конструктор класса.
      * @param currUserLogin Логин аутентифицированного пользователя.
-     * @param workPlaceDAO DAO для работы с рабочими местами.
-     * @param conferenceRoomDAO DAO для работы с конференц-залами.
+     * @param placeDAO DAO для работы с местами.
      * @param reservationDAO DAO для работы с бронированиями.
      */
-    public MainController(String currUserLogin,
-    WorkPlaceDAO workPlaceDAO, ConferenceRoomDAO conferenceRoomDAO, 
-    ReservationDAO reservationDAO) {
+    public MainController(String currUserLogin, PlaceDAO placeDAO, ReservationDAO reservationDAO) {
         this.mainView = new MainView(this);
-        this.workPlaceDAO = workPlaceDAO;
-        this.conferenceRoomDAO = conferenceRoomDAO;
+        this.placeDAO = placeDAO;
         this.reservationDAO = reservationDAO;
     }
 
@@ -67,9 +59,7 @@ public class MainController {
      * Получает список всех рабочих мест и конференц-залов без учета их занятости и выводит его в представление.
      */
     public void search() {
-        List<Place> places = listAllPlaces();
-
-        mainView.printList(places);
+        mainView.printList(placeDAO.getPlaces());
     }
 
     /**
@@ -80,7 +70,7 @@ public class MainController {
     public void searchDay(LocalDate date) {
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
 
-        //List<Place> places = listAllPlaces();
+        List<Place> places = placeDAO.getPlaces();
 
         List<Reservation> reservations = reservationDAO.getReservations();
 
@@ -89,7 +79,7 @@ public class MainController {
         reservationsByPlace.forEach((placeId, resList) -> {
             // Создание полного списка интервалов времени открытия до закрытия
             List<LocalTime> allIntervals = generatingAllTimeInterval();
-
+            
             // Удаление занятых интервалов
             for (Reservation res : resList) {
                 allIntervals.removeIf(time -> !time.isBefore(res.getStartTime()) && !time.isAfter(res.getEndTime()));
@@ -97,8 +87,7 @@ public class MainController {
 
             // Вывод свободных интервалов
             if(allIntervals.size() != 0) {
-                listPlacesWithTime.append(String.format("%d)", placeId));
-                listPlacesWithTime.append(resList.get(0).getPlace().toString() + " : ");
+                listPlacesWithTime.append(resList.get(0).getPlace().toString() + " : \n");
                 for (int i = 0; i < allIntervals.size() - 1; i++) {
                     listPlacesWithTime.append(allIntervals.get(i));
                     listPlacesWithTime.append(" - ");
@@ -106,9 +95,18 @@ public class MainController {
                     listPlacesWithTime.append(", ");
                 }
             }
+
         });
+
+        places.removeIf(place -> reservationsByPlace.keySet().contains(place.getId()));
+
+        for(Place place : places) {
+            listPlacesWithTime.append(place.toString() + " : \n");
+            listPlacesWithTime.append("8 - 22\n");
+        }
+
         mainView.print(listPlacesWithTime.toString());
-        mainView.reservation(reservationsByPlace);
+        mainView.reservation(reservationsByPlace, date);
     }
 
      /**
@@ -119,8 +117,9 @@ public class MainController {
      * @param idPlace Идентификатор места для бронирования.
      * @param starTime Время начала бронирования.
      * @param endTime Время окончания бронирования.
+     * @param date День начала бронирования.
      */
-    public void reservating(Map<Integer, List<Reservation>> reservationByPlace, Integer idPlace, LocalTime starTime, LocalTime endTime) {
+    public void reservating(Map<Integer, List<Reservation>> reservationByPlace, Integer idPlace, LocalTime starTime, LocalTime endTime, LocalDate date) {
         if(reservationByPlace.containsKey(idPlace)) {
             for(Reservation reserv : reservationByPlace.get(idPlace)) {
                 if(!reserv.getStartTime().isAfter(starTime) && 
@@ -133,6 +132,10 @@ public class MainController {
                     mainView.print("Место успешно забронированно!");
                 }
             }
+        }
+        else if(placeDAO.exist(idPlace)){
+            reservationDAO.addReservation(placeDAO.getPlace(idPlace), currUserLogin, date, starTime, endTime); 
+            mainView.print("Место успешно забронированно!");
         }
         else {
             mainView.sayError("Неверно указан ID места!");
@@ -150,23 +153,12 @@ public class MainController {
                     .mapToObj(i -> LocalTime.ofSecondOfDay(i))
                     .collect(Collectors.toList());
     }
-    /**
-     * Метод возвращающий все места зарегистрированные в системе.
-     * @return Список всех мест зарегистрированных в системе.
-     */
-    private List<Place> listAllPlaces() {
-        List<Place> places = new ArrayList<>();
-        places.addAll(workPlaceDAO.getPlaces());
-        places.addAll(conferenceRoomDAO.getPlaces());
-        return places;
-    }
 
     /**
      * Метод ищет все места зарегистрированные на логин текущего пользователя и передает их представлению для вывода.
      */
     public void myPublication() {
-        List<Place> places = listAllPlaces().stream().filter(p -> p.getLoginOwner().equals(currUserLogin)).toList();
-        mainView.myPlaceAction(places);
+        mainView.myPlaceAction(placeDAO.getPlacesOneOwner(currUserLogin));
     }
 
     /**
@@ -176,13 +168,7 @@ public class MainController {
     public void deleteMyPlace(int id) {
         try {
             reservationDAO.deleteElementForPlaceId(id);
-            Place place = listAllPlaces().stream().filter(p -> p.getId() == id).findAny().orElse(null);
-            if(place.getClass() == ConferenceRoom.class) {
-                conferenceRoomDAO.deleteElement(id);
-            }
-            else {
-                workPlaceDAO.deletePlace(id);
-            }
+            placeDAO.deletePlace(id);
             mainView.print("Удаление завершено!");
         } catch (Exception e) {
             mainView.sayError(e.getMessage());
@@ -194,7 +180,7 @@ public class MainController {
      * Добавляет рабочее место в базу данных и обновляет представление.
      */
     public void createMyPlace() {
-        workPlaceDAO.addWorkPlace(currUserLogin);
+        placeDAO.addPlace(currUserLogin);
         mainView.print("Добавление завершено!");
     }
 
@@ -204,7 +190,7 @@ public class MainController {
      * @param seats Количество мест в новом конференц-зале.
      */
     public void createMyPlace(int seats) {
-        conferenceRoomDAO.addConferenseRoom(currUserLogin, seats);
+        placeDAO.addConferenseRoom(currUserLogin, seats);
         mainView.print("Добавление завершено!");
     }
 
@@ -280,11 +266,11 @@ public class MainController {
                         .toList();
         switch (param) {
             case "conference":
-                list = list.stream().filter(res -> res.getPlaceType() == PlaceType.CONFERENCEROOM).toList();
+                list = list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
                 reservOut(list);
                 break;
             case "work":
-                list = list.stream().filter(res -> res.getPlaceType() == PlaceType.WORKPLACE).toList();
+                list = list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
                 reservOut(list);
                 break;
         }
@@ -328,4 +314,5 @@ public class MainController {
         }
         mainView.print(sb.toString());
     }
+
 }

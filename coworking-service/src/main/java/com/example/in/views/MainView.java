@@ -230,7 +230,7 @@ public class MainView {
      * Позволяет пользователю забронировать место, указав ID и желаемый временной интервал.
      * @param reservationByPlace Словарь где ключем выступает id места, а значением лист записей на это место.
      */
-    public void reservation(Map<Integer, List<Reservation>> reservationByPlace) {
+    public void reservation(Map<Integer, List<Reservation>> reservationByPlace, LocalDate date) {
         String str = new String();
         while(true) {
             System.out.println("Бронирование(reserv)/Выйти в меню(exit):");
@@ -243,15 +243,16 @@ public class MainView {
                 case "reserv":
                     System.out.println("Введите ID лота: ");
                     try {
-                        Integer i = scanner.nextInt();
+                        Integer i = Integer.parseInt(scanner.nextLine());
                         System.out.println("Введите интервал желаемой записи в формате HH:mm HH:mm: ");
-                        String[] strings = scanner.nextLine().split(" ");
+                        String inpuString = scanner.nextLine();
+                        String[] strings = inpuString.split(" ");
                         LocalTime startTime = LocalTime.parse(strings[0], formatterTime);
                         LocalTime endTime = LocalTime.parse(strings[1], formatterTime);
                         if(endTime.isBefore(startTime)) {
                             throw new Exception("Неправильный временной порядок!");
                         }
-                        mainController.reservating(reservationByPlace, i, startTime, endTime);
+                        mainController.reservating(reservationByPlace, i, startTime, endTime, date);
                     } 
                     catch (Exception e) {
                         sayError(e.getMessage());

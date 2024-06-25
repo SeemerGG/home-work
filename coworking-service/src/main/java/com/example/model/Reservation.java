@@ -16,7 +16,6 @@ public class Reservation {
     private LocalTime startTime;
     private LocalTime endTime;
     private LocalDate date;
-    private PlaceType placeType;
 
     /**
      * Конструктор для создания бронирования.
@@ -29,26 +28,12 @@ public class Reservation {
      */
     public Reservation(Place place, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) {
-        if(place.getClass() == WorkPlace.class) {
-            placeType = PlaceType.WORKPLACE;
-        }
-        else {
-            placeType = PlaceType.CONFERENCEROOM;
-        }
         this.place = place;
         this.clientLogin = clientLogin;
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
         this.id = ++lastId;
-    }
-
-    /**
-     * Получает тип места бронирования.
-     * @return Тип места.
-     */
-    public PlaceType getPlaceType() {
-        return placeType;
     }
 
     /**
@@ -144,8 +129,6 @@ public class Reservation {
         sb.append(id);
         sb.append(" PlaceId: ");
         sb.append(place.getId());
-        sb.append(" Тип места: ");
-        sb.append(placeType.name());
         sb.append(" Логин клиента: ");
         sb.append(clientLogin);
         sb.append(" День:");
