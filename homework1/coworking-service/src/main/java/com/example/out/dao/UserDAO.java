@@ -9,7 +9,7 @@ import com.example.model.User;
  * Класс для доступа к данным пользователей.
  * Предоставляет методы для работы с пользователями в базе данных.
  */
-public class UserDAO {
+public final class UserDAO {
     private List<User> users;
 
     {

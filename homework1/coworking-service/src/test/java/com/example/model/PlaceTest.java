@@ -3,16 +3,19 @@ package com.example.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class PlaceTest {
     @Test
+    @DisplayName("Проверка корректности создания элемента.")
     void testGetId() {
         Place place = new Place("testOwner") {};
         assertTrue(place.getId() > 0, "ID должен быть положительным числом и уникальным для каждого экземпляра.");
     }
 
     @Test
+    @DisplayName("Проверка корректности логина созданного элемента.")
     void testGetLoginOwner() {
         String loginOwner = "testOwner";
         Place place = new Place(loginOwner) {};
@@ -20,6 +23,7 @@ public class PlaceTest {
     }
 
     @Test
+    @DisplayName("Проверка корректности строкового представления.")
     void testToString() {
         String loginOwner = "testOwner";
         Place place = new Place(loginOwner) {};

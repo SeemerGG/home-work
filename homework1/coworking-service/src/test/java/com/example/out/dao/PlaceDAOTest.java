@@ -1,20 +1,20 @@
 package com.example.out.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.example.model.Place;
-import com.example.model.PlaceType;
 
 public class PlaceDAOTest {
 
-    private PlaceDAO placeDAO;
+     private PlaceDAO placeDAO;
 
     @BeforeEach
     void setUp() {
@@ -22,58 +22,57 @@ public class PlaceDAOTest {
     }
 
     @Test
-    void addPlace_ShouldAddPlace() {
-        int initialSize = placeDAO.getPlaces().size();
+    @DisplayName("Добавление нового рабочего места")
+    void testAddPlace() {
         String loginOwner = "user0002";
         placeDAO.addPlace(loginOwner);
-        int newSize = placeDAO.getPlaces().size();
-        assertEquals(initialSize + 1, newSize);
-        assertEquals(loginOwner, placeDAO.getPlaces().get(newSize - 1).getLoginOwner());
+        Map<Integer, Place> places = placeDAO.getPlaces();
+        assertTrue(places.values().stream().anyMatch(place -> place.getLoginOwner().equals(loginOwner)),
+                "Новое рабочее место должно быть добавлено");
     }
 
     @Test
-    void addConferenseRoom_ShouldAddConferenceRoom() {
-        int initialSize = placeDAO.getPlaces().size();
+    @DisplayName("Добавление нового конференц-зала")
+    void testAddConferenceRoom() {
         String loginOwner = "user0003";
         int seats = 50;
         placeDAO.addConferenseRoom(loginOwner, seats);
-        int newSize = placeDAO.getPlaces().size();
-        Place addedPlace = placeDAO.getPlaces().get(newSize - 1);
-        assertEquals(initialSize + 1, newSize);
-        assertEquals(loginOwner, addedPlace.getLoginOwner());
-        assertEquals(seats, addedPlace.getSeats());
-        assertEquals(PlaceType.CONFERENCEROOM, addedPlace.getPlaceType());
+        Map<Integer, Place> places = placeDAO.getPlacesConferenceRoom();
+        assertTrue(places.values().stream().anyMatch(place -> place.getLoginOwner().equals(loginOwner) && place.getSeats() == seats),
+                "Новый конференц-зал должен быть добавлен");
     }
 
     @Test
-    void deletePlace_ShouldRemovePlace() {
-        int idToDelete = placeDAO.getPlaces().get(0).getId();
-        int initialSize = placeDAO.getPlaces().size();
-
-        placeDAO.deletePlace(idToDelete);
-        int newSize = placeDAO.getPlaces().size();
-
-        assertEquals(initialSize - 1, newSize);
-        assertNull(placeDAO.getPlace(idToDelete));
+    @DisplayName("Получение места по идентификатору")
+    void testGetPlace() {
+        int id = 1; 
+        Place place = placeDAO.getPlace(id);
+        assertNotNull(place, "Место с данным идентификатором должно существовать");
     }
 
     @Test
-    void exist_ShouldReturnTrueIfExists() {
-        int id = placeDAO.getPlaces().get(0).getId();
-
-        boolean exists = placeDAO.exist(id);
-
-        assertTrue(exists);
+    @DisplayName("Удаление места по идентификатору")
+    void testDeletePlace() {
+        int id = 1; 
+        assertTrue(placeDAO.exist(id), "Место до удаления должно существовать");
+        placeDAO.deletePlace(id);
+        assertFalse(placeDAO.exist(id), "Место после удаления не должно существовать");
     }
 
     @Test
-    void getPlacesOneOwner_ShouldReturnPlacesForOneOwner() {
+    @DisplayName("Проверка существования места по идентификатору")
+    void testExist() {
+        int id = 1; 
+        assertTrue(placeDAO.exist(id), "Место с данным идентификатором должно существовать");
+    }
+
+    @Test
+    @DisplayName("Получение списка мест одного владельца")
+    void testGetPlacesOneOwner() {
         String loginOwner = "user0001";
-        List<Place> expectedPlaces = placeDAO.getPlacesOneOwner(loginOwner);
-
-        List<Place> actualPlaces = placeDAO.getPlacesOneOwner(loginOwner);
-
-        assertEquals(expectedPlaces, actualPlaces);
-        assertTrue(actualPlaces.stream().allMatch(place -> place.getLoginOwner().equals(loginOwner)));
+        Map<Integer, Place> places = placeDAO.getPlacesOneOwner(loginOwner);
+        assertFalse(places.isEmpty(), "Список мест одного владельца не должен быть пустым");
+        assertTrue(places.values().stream().allMatch(place -> place.getLoginOwner().equals(loginOwner)),
+                "Все места в списке должны принадлежать одному владельцу");
     }
 }

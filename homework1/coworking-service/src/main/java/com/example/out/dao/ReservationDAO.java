@@ -2,8 +2,10 @@ package com.example.out.dao;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.example.model.Place;
 import com.example.model.PlaceType;
@@ -13,19 +15,19 @@ import com.example.model.Reservation;
  * Класс для доступа к данным о бронированиях.
  * Позволяет управлять бронированиями мест в системе.
  */
-public class ReservationDAO {
+public final class ReservationDAO {
 
-    private List<Reservation> list;
+    private Map<Integer, Reservation> list;
 
     {
-        list = new ArrayList<>();
+        list = new HashMap<Integer, Reservation>();
     }
 
     /**
      * Получение списка всех бронирований.
      * @return Список бронирований.
      */
-    public List<Reservation> getReservations() {
+    public Map<Integer, Reservation> getReservations() {
         return list;
     }
 
@@ -35,14 +37,14 @@ public class ReservationDAO {
      * @return Бронирование или null, если бронирование не найдено.
      */
     public Reservation getReservation(int id) {
-        return list.stream().filter(el -> el.getId() == id).findAny().orElse(null);
+        return list.get(id);
     }
 
     /**
      * Установка нового списка бронирований.
      * @param list Новый список бронирований.
      */
-    public void setList(List<Reservation> list) {
+    public void setList(Map<Integer, Reservation> list) {
         this.list = list;
     }
 
@@ -56,7 +58,8 @@ public class ReservationDAO {
      */
     public void addReservation(Place place, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) {
-        list.add(new Reservation(place, clientLogin, date, startTime, endTime));
+        Reservation reservation = new Reservation(place, clientLogin, date, startTime, endTime);
+        list.put(reservation.getId(), reservation);
     }
 
     /**
@@ -64,7 +67,13 @@ public class ReservationDAO {
      * @param placeId Идентификатор места, для которого нужно удалить бронирования.
      */
     public void deleteElementForPlaceId(int placeId) {
-        list.removeIf(p -> p.getPlace().getId() == placeId);
+        Iterator<Map.Entry<Integer, Reservation>> iterator = list.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Reservation> entry = iterator.next();
+            if (entry.getValue().getPlace().getId() == placeId) {
+                iterator.remove(); 
+            }
+        }
     }
 
     /**
@@ -74,12 +83,10 @@ public class ReservationDAO {
      * @param endTime Новое время окончания бронирования.
      */
     public void updateTime(int id, LocalTime startTime, LocalTime endTime) { 
-        list.stream()
-            .filter(el -> el.getId() == id)
-            .findFirst()
-            .ifPresent(el -> {
-                el.setTime(startTime, endTime);;
-            });
+        Reservation reservation = list.get(id);
+        reservation.setTime(startTime, endTime);
+        list.remove(id);
+        list.put(id, reservation);
     }
 
     /**
@@ -87,7 +94,7 @@ public class ReservationDAO {
      * @param id Идентификатор бронирования, которое нужно удалить.
      */
     public void delete(int id) {
-        list.removeIf(res -> res.getId() == id);
+        list.remove(id);
     }
 
     /**
@@ -96,7 +103,7 @@ public class ReservationDAO {
      * @return Список записей на указаный день.
      */
     public List<Reservation> getReservationsForDate(LocalDate date) {
-        return list.stream().filter(res -> res.getDate().isEqual(date)).toList();
+        return list.values().stream().filter(res -> res.getDate().isEqual(date)).toList();
     }
 
     /**
@@ -105,7 +112,7 @@ public class ReservationDAO {
      * @return Список записей на указаное место.
      */
     public List<Reservation> getReservationsForPlace(int idPlace) { 
-        return list.stream().filter(res -> res.getPlace().getId() == idPlace).toList();
+        return list.values().stream().filter(res -> res.getPlace().getId() == idPlace).toList();
     }
 
     /**
@@ -114,7 +121,7 @@ public class ReservationDAO {
      * @return Список записей указанного пользователя.
      */
     public List<Reservation> getReservationsForLogin(String login) { 
-        return list.stream().filter(res -> res.getClientLogin().equals(login)).toList();
+        return list.values().stream().filter(res -> res.getClientLogin().equals(login)).toList();
     }
 
     /**
@@ -124,10 +131,10 @@ public class ReservationDAO {
      */
     public List<Reservation> getReservationsForType(PlaceType Type) { 
         if(Type == PlaceType.CONFERENCEROOM) {
-            return list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
+            return list.values().stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
         }
         if(Type == PlaceType.WORKPLACE) {
-            return list.stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
+            return list.values().stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
         }
         return null;
     }

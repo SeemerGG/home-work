@@ -59,7 +59,7 @@ public class MainController {
      * Получает список всех рабочих мест и конференц-залов без учета их занятости и выводит его в представление.
      */
     public void search() {
-        mainView.printList(placeDAO.getPlaces());
+        mainView.printList(placeDAO.getPlaces().values());
     }
 
     /**
@@ -70,20 +70,17 @@ public class MainController {
     public void searchDay(LocalDate date) {
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
 
-        List<Place> places = placeDAO.getPlaces();
+        Map<Integer, Place> places = placeDAO.getPlaces();
 
         Stream<Reservation> stream = reservationDAO.getReservationsForDate(date).stream();
         Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlace().getId()));
         reservationsByPlace.forEach((placeId, resList) -> {
-            // Создание полного списка интервалов времени открытия до закрытия
             List<LocalTime> allIntervals = generatingAllTimeInterval();
             
-            // Удаление занятых интервалов
             for (Reservation res : resList) {
                 allIntervals.removeIf(time -> !time.isBefore(res.getStartTime()) && !time.isAfter(res.getEndTime()));
             }
 
-            // Вывод свободных интервалов
             if(allIntervals.size() != 0) {
                 listPlacesWithTime.append(resList.get(0).getPlace().toString() + " : \n");
                 for (int i = 0; i < allIntervals.size() - 1; i++) {
@@ -92,13 +89,18 @@ public class MainController {
                     listPlacesWithTime.append(allIntervals.get(i + 1));
                     listPlacesWithTime.append(", ");
                 }
+                listPlacesWithTime.append("\n");
             }
 
         });
 
-        places.removeIf(place -> reservationsByPlace.keySet().contains(place.getId()));
+        for(Map.Entry<Integer, Place> entry : places.entrySet()) {
+            if(reservationsByPlace.keySet().contains(entry.getKey())) {
+                places.remove(entry.getKey());
+            }
+        }
 
-        for(Place place : places) {
+        for(Place place : places.values()) {
             listPlacesWithTime.append(place.toString() + " : \n");
             listPlacesWithTime.append("8 - 22\n");
         }

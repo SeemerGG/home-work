@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.example.model.User;
@@ -20,11 +21,13 @@ public class UserDAOTest {
     }
 
     @Test
+    @DisplayName("Проверка инициализации списка пользователей.")
     void testGetUsers() {
         assertFalse(userDAO.getUsers().isEmpty(), "Список пользователей не должен быть пустым");
     }
 
     @Test
+    @DisplayName("Проверка метода получения пользователя по его логину.")
     void testGetUser() {
         User user = userDAO.getUser("user0003");
         assertNotNull(user, "Пользователь с логином user0003 должен существовать");

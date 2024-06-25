@@ -1,5 +1,6 @@
 package com.example.in.views;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -99,7 +100,7 @@ public class MainView {
                 case "update":
                     System.out.println("Введите ID записи:");
                     try {
-                        Integer id = scanner.nextInt();
+                        Integer id = Integer.parseInt(scanner.nextLine());
                         System.out.println("Введите новый интервал записи в формате HH:mm HH:mm: ");
                         String[] strings = scanner.nextLine().split(" ");
                         LocalTime startTime = LocalTime.parse(strings[0], formatterTime);
@@ -117,7 +118,7 @@ public class MainView {
                 case "delete":
                     System.out.println("Введите ID записи: ");
                     try {
-                        Integer id = scanner.nextInt();
+                        Integer id = Integer.parseInt(scanner.nextLine());
                         mainController.deleteReservaton(id);
                         mainController.reservOut();
                     } catch (Exception e) {
@@ -126,7 +127,7 @@ public class MainView {
                     break;
                 case "filter":
                     System.out.println("Введите параметр фильтрации(type/date/owner):");
-                    String command = new String();
+                    String command = scanner.nextLine();
                     switch (command) {
                         case "type":
                             System.out.println("Введите тип места(conference/work):");
@@ -142,9 +143,7 @@ public class MainView {
                             }
                             break;
                         case "date":
-                            //System.out.println("Введите дату в формате dd.MM.yyyy:");
                             try {
-                                //LocalDate date = LocalDate.parse(scanner.nextLine(), formatter);
                                 mainController.filterForDate();
                             } catch (Exception e) {
                                 sayError(e.getMessage());
@@ -175,9 +174,9 @@ public class MainView {
      * Позволяет пользователю добавить или удалить место из списка его мест.
      * @param myPlaces Список мест, принадлежащих пользователю.
      */
-    public void myPlaceAction(List<Place> myPlaces) {
+    public void myPlaceAction(Map<Integer, Place> myPlaces) {
         String command = new String();
-        printList(myPlaces);
+        printList(myPlaces.values());
         while(true) {
             System.out.println("Удаления места(delete)/Добавление места(create)/Выход в меню (exit):");
             command = scanner.nextLine();
@@ -188,7 +187,7 @@ public class MainView {
                 case "delete":
                     try {
                         System.out.println("Введите ID места: ");
-                        Integer id = scanner.nextInt();
+                        Integer id = Integer.parseInt(scanner.nextLine());
                         mainController.deleteMyPlace(id);
                     } catch (Exception e) {
                         sayError(e.getMessage());
@@ -201,7 +200,7 @@ public class MainView {
                         System.out.println(type);
                         if(type.equals("conference")) {
                             System.out.println("Введите количество мест в зале: ");
-                            Integer i = scanner.nextInt();
+                            Integer i = Integer.parseInt(scanner.nextLine());
                             if(i < 1) { 
                                 throw new Exception("Количество мест в зале не может быть меньше 1!");
                             }
@@ -269,13 +268,12 @@ public class MainView {
      * Выводит список мест в консоль.
      * @param list Список мест для вывода.
      */
-    public void printList(List<Place> list) {
+    public void printList(Collection<Place> list) {
         StringBuilder sb = new StringBuilder();
 
-        for(int i = 0; i < list.size(); i++) {
-            sb.append(i+")");
-            sb.append(list.get(i).toString());
-            sb.append("\n");
+        for(Place place : list) {
+            sb.append(place.toString());
+            sb.append("\n"); 
         }
         System.out.println(sb.toString());
     }

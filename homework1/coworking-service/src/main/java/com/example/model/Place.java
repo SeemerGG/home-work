@@ -5,7 +5,6 @@ package com.example.model;
  * Этот класс служит базой для всех типов мест, которые могут быть забронированы.
  */
 public class Place {
-    //Не обращаем внимание...
     private static int last_id = 0;
     private int id;
     private String loginOwner;
