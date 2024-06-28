@@ -11,7 +11,7 @@ public class Reservation {
 
     private static int lastId = 0;
     private int id;
-    private Place place;
+    private int placeId;
     private String clientLogin;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -20,15 +20,15 @@ public class Reservation {
     /**
      * Конструктор для создания бронирования.
      * Определяет тип места и инициализирует бронирование с уникальным ID.
-     * @param place Место для бронирования.
+     * @param placeId Идентификатор места.
      * @param clientLogin Логин клиента.
      * @param date Дата бронирования.
      * @param startTime Время начала бронирования.
      * @param endTime Время окончания бронирования.
      */
-    public Reservation(Place place, String clientLogin, LocalDate date, 
+    public Reservation(int placeId, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) {
-        this.place = place;
+        this.placeId = placeId;
         this.clientLogin = clientLogin;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -101,11 +101,11 @@ public class Reservation {
     }
 
     /**
-     * Получает место бронирования.
-     * @return Место бронирования.
+     * Получает идентификатор места бронирования.
+     * @return Идентификатор места.
      */
-    public Place getPlace() {
-        return place;
+    public int getPlaceId() {
+        return placeId;
     }
 
     /**
@@ -128,7 +128,7 @@ public class Reservation {
         sb.append("ID: ");
         sb.append(id);
         sb.append(" PlaceId: ");
-        sb.append(place.getId());
+        sb.append(placeId);
         sb.append(" Логин клиента: ");
         sb.append(clientLogin);
         sb.append(" День:");

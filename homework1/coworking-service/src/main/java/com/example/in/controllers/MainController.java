@@ -72,8 +72,8 @@ public class MainController {
 
         Map<Integer, Place> places = placeDAO.getPlaces();
 
-        Stream<Reservation> stream = reservationDAO.getReservationsForDate(date).stream();
-        Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlace().getId()));
+        Stream<Reservation> stream = getReservationsForDate(date).stream();
+        Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlaceId()));
         reservationsByPlace.forEach((placeId, resList) -> {
             List<LocalTime> allIntervals = generatingAllTimeInterval();
             
@@ -82,7 +82,7 @@ public class MainController {
             }
 
             if(allIntervals.size() != 0) {
-                listPlacesWithTime.append(resList.get(0).getPlace().toString() + " : \n");
+                listPlacesWithTime.append(placeDAO.getPlace(resList.get(0).getPlaceId()).toString() + " : \n");
                 for (int i = 0; i < allIntervals.size() - 1; i++) {
                     listPlacesWithTime.append(allIntervals.get(i));
                     listPlacesWithTime.append(" - ");
@@ -127,14 +127,14 @@ public class MainController {
                     mainView.sayError("Указанный период уже занят (полностью или частично)!");
                 }
                 else {
-                    reservationDAO.addReservation(reservationByPlace.get(idPlace).get(0).getPlace(), 
-                    currUserLogin, reservationByPlace.get(idPlace).get(0).getDate(), starTime, endTime);
+                    reservationDAO.addReservation(idPlace, currUserLogin, 
+                    reservationByPlace.get(idPlace).get(0).getDate(), starTime, endTime);
                     mainView.print("Место успешно забронированно!");
                 }
             }
         }
         else if(placeDAO.exist(idPlace)){
-            reservationDAO.addReservation(placeDAO.getPlace(idPlace), currUserLogin, date, starTime, endTime); 
+            reservationDAO.addReservation(idPlace, currUserLogin, date, starTime, endTime); 
             mainView.print("Место успешно забронированно!");
         }
         else {
@@ -208,8 +208,8 @@ public class MainController {
                 throw new Exception("Неверный ID!");
             }
             else {
-                List<Reservation> listReserv = reservationDAO.getReservationsForDate(reservation.getDate()).stream().filter(res -> 
-                res.getPlace().getId() == reservation.getPlace().getId()).toList();
+                List<Reservation> listReserv = getReservationsForDate(reservation.getDate()).stream().filter(res -> 
+                res.getPlaceId() == reservation.getPlaceId()).toList();
                 listReserv.remove(id);
                 for(Reservation reserv : listReserv) {
                     if(!reserv.getStartTime().isAfter(startTime) && 
@@ -233,7 +233,7 @@ public class MainController {
      * Передает полученную строку в представление для отображения.
      */
     public void reservOut() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
+        List<Reservation> list = getReservationsForLogin(currUserLogin);
         StringBuilder sb = new StringBuilder();
         for(Reservation res : list) {
             sb.append(res.toString());
@@ -262,10 +262,10 @@ public class MainController {
      */
     public void filterForType(String param) {
         if(param.equals("conference")) {
-            reservOut(reservationDAO.getReservationsForType(PlaceType.CONFERENCEROOM));
+            reservOut(getReservationsForType(PlaceType.CONFERENCEROOM));
         }
         else if(param.equals("work")) {
-            reservOut(reservationDAO.getReservationsForType(PlaceType.WORKPLACE));
+            reservOut(getReservationsForType(PlaceType.WORKPLACE));
         }
     }
 
@@ -274,7 +274,7 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
     public void filterForDate() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
+        List<Reservation> list = getReservationsForLogin(currUserLogin);
         Collections.sort(list, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
         reservOut(list);
     }
@@ -284,8 +284,8 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
     public void filterForOwner() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
-        Collections.sort(list, (obj1, obj2) -> obj1.getPlace().getLoginOwner().compareTo(obj2.getPlace().getLoginOwner()));
+        List<Reservation> list = getReservationsForLogin(currUserLogin);
+        Collections.sort(list, (obj1, obj2) -> placeDAO.getPlace(obj1.getPlaceId()).getLoginOwner().compareTo(placeDAO.getPlace(obj2.getPlaceId()).getLoginOwner()));
         reservOut(list);
     }
 
@@ -301,6 +301,48 @@ public class MainController {
             sb.append("\n");
         }
         mainView.print(sb.toString());
+    }
+
+    /**
+     * Метод получения записей на конкретный день.
+     * @param date Денью
+     * @return Список записей на указаный день.
+     */
+    private List<Reservation> getReservationsForDate(LocalDate date) {
+        return reservationDAO.getReservations().values().stream().filter(res -> res.getDate().isEqual(date)).toList();
+    }
+
+    /**
+     * Метод получения записей на конкретное место.
+     * @param idPlace Идентификатор места.
+     * @return Список записей на указаное место.
+     */
+    private List<Reservation> getReservationsForPlace(int idPlace) { 
+        return reservationDAO.getReservations().values().stream().filter(res -> res.getId() == idPlace).toList();
+    }
+
+    /**
+     * Метод получения записей одного пользователя.
+     * @param login Логин пользователя.
+     * @return Список записей указанного пользователя.
+     */
+    private List<Reservation> getReservationsForLogin(String login) { 
+        return reservationDAO.getReservations().values().stream().filter(res -> res.getClientLogin().equals(login)).toList();
+    }
+
+    /**
+     * Метод получения записей по указанному типу места.
+     * @param Type Тип места.
+     * @return Список записей указанного типа.
+     */
+    private List<Reservation> getReservationsForType(PlaceType Type) { 
+        if(Type == PlaceType.CONFERENCEROOM) {
+            return reservationDAO.getReservations().values().stream().filter(res -> placeDAO.getPlace(res.getPlaceId()).getPlaceType() == PlaceType.CONFERENCEROOM).toList();
+        }
+        if(Type == PlaceType.WORKPLACE) {
+            return reservationDAO.getReservations().values().stream().filter(res -> placeDAO.getPlace(res.getPlaceId()).getPlaceType() == PlaceType.WORKPLACE).toList();
+        }
+        return null;
     }
 
 }

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 public class ReservationTest {
     private Reservation reservation;
-    private Place place;
+    private int placeId = 1;
     private final String clientLogin = "clientLogin";
     private final LocalDate date = LocalDate.of(2024, 6, 23);
     private final LocalTime startTime = LocalTime.of(14, 0);
@@ -20,8 +20,7 @@ public class ReservationTest {
 
     @BeforeEach
     void setUp() {
-        place = new Place("ownerLogin", 10) {};
-        reservation = new Reservation(place, clientLogin, date, startTime, endTime);
+        reservation = new Reservation(placeId, clientLogin, date, startTime, endTime);
     }
 
     @Test
@@ -82,7 +81,7 @@ public class ReservationTest {
     @DisplayName("Проверка корректности строкового представления.")
     void testToString() {
         String expectedString = "ID: " + reservation.getId() +
-                                " PlaceId: " + place.getId() +
+                                " PlaceId: " + placeId +
                                 " Логин клиента: " + clientLogin +
                                 " День:" + date +
                                 " Время начала: " + startTime +

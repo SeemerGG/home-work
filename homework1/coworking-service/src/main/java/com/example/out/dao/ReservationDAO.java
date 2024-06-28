@@ -4,11 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import com.example.model.Place;
-import com.example.model.PlaceType;
 import com.example.model.Reservation;
 
 /**
@@ -50,15 +47,15 @@ public final class ReservationDAO {
 
     /**
      * Добавление нового бронирования.
-     * @param place Место, которое нужно забронировать.
+     * @param placeId Идентификатор места, которое нужно забронировать.
      * @param clientLogin Логин клиента, который делает бронирование.
      * @param date Дата бронирования.
      * @param startTime Время начала бронирования.
      * @param endTime Время окончания бронирования.
      */
-    public void addReservation(Place place, String clientLogin, LocalDate date, 
+    public void addReservation(int placeId, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) {
-        Reservation reservation = new Reservation(place, clientLogin, date, startTime, endTime);
+        Reservation reservation = new Reservation(placeId, clientLogin, date, startTime, endTime);
         list.put(reservation.getId(), reservation);
     }
 
@@ -70,7 +67,7 @@ public final class ReservationDAO {
         Iterator<Map.Entry<Integer, Reservation>> iterator = list.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, Reservation> entry = iterator.next();
-            if (entry.getValue().getPlace().getId() == placeId) {
+            if (entry.getValue().getPlaceId() == placeId) {
                 iterator.remove(); 
             }
         }
@@ -97,46 +94,6 @@ public final class ReservationDAO {
         list.remove(id);
     }
 
-    /**
-     * Метод получения записей на конкретный день.
-     * @param date Денью
-     * @return Список записей на указаный день.
-     */
-    public List<Reservation> getReservationsForDate(LocalDate date) {
-        return list.values().stream().filter(res -> res.getDate().isEqual(date)).toList();
-    }
-
-    /**
-     * Метод получения записей на конкретное место.
-     * @param idPlace Идентификатор места.
-     * @return Список записей на указаное место.
-     */
-    public List<Reservation> getReservationsForPlace(int idPlace) { 
-        return list.values().stream().filter(res -> res.getPlace().getId() == idPlace).toList();
-    }
-
-    /**
-     * Метод получения записей одного пользователя.
-     * @param login Логин пользователя.
-     * @return Список записей указанного пользователя.
-     */
-    public List<Reservation> getReservationsForLogin(String login) { 
-        return list.values().stream().filter(res -> res.getClientLogin().equals(login)).toList();
-    }
-
-    /**
-     * Метод получения записей по указанному типу места.
-     * @param Type Тип места.
-     * @return Список записей указанного типа.
-     */
-    public List<Reservation> getReservationsForType(PlaceType Type) { 
-        if(Type == PlaceType.CONFERENCEROOM) {
-            return list.values().stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.CONFERENCEROOM).toList();
-        }
-        if(Type == PlaceType.WORKPLACE) {
-            return list.values().stream().filter(res -> res.getPlace().getPlaceType() == PlaceType.WORKPLACE).toList();
-        }
-        return null;
-    }
+    
     
 }
