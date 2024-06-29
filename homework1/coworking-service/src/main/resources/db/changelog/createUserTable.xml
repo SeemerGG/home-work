@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+   <changeSet id="createUserTable" author="Seemer">
+    <createTable tableName="User" schemaName="workSchema">
+        <column name="login" type="varchar(128)">
+            <constraints primaryKey="true" nullable="false" unique="true"/>
+        </column>
+        <column name="password" type="varchar(128)">
+            <constraints nullable="false"/>
+        </column> 
+    </createTable>
+   </changeSet>
+</databaseChangeLog>

@@ -9,7 +9,6 @@ import java.time.LocalTime;
  */
 public class Reservation {
 
-    private static int lastId = 0;
     private int id;
     private int placeId;
     private String clientLogin;
@@ -20,20 +19,21 @@ public class Reservation {
     /**
      * Конструктор для создания бронирования.
      * Определяет тип места и инициализирует бронирование с уникальным ID.
+     * @param id Идентификатор брони.
      * @param placeId Идентификатор места.
      * @param clientLogin Логин клиента.
      * @param date Дата бронирования.
      * @param startTime Время начала бронирования.
      * @param endTime Время окончания бронирования.
      */
-    public Reservation(int placeId, String clientLogin, LocalDate date, 
+    public Reservation(int id, int placeId, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) {
         this.placeId = placeId;
         this.clientLogin = clientLogin;
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
-        this.id = ++lastId;
+        this.id = id;
     }
 
     /**

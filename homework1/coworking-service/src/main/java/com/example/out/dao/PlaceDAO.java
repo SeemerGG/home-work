@@ -1,11 +1,15 @@
 package com.example.out.dao;
 
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Place;
-import com.example.model.PlaceType;
 
 /**
  * DAO класс для управления местами.
@@ -13,26 +17,24 @@ import com.example.model.PlaceType;
  */
 public final class PlaceDAO {
 
-    private Map<Integer, Place> places;
+    public Connection connection;
 
-    {
-        places = new HashMap<Integer,Place>();
-        
-        for(int i = 0; i < 3; i++) {
-            Place place = new Place("user0001");
-            Place place2 = new Place("user0001", 30+i);
-            places.put(place.getId(), place);
-            places.put(place2.getId(), place2);
-        }
+    /**
+     * Конструктор.
+     */
+    public PlaceDAO() {
+        connection = DBSingleton.getInstance();
     }
 
     /**
      * Добавляет новое рабочее место в список.
      * @param loginOwner Логин владельца рабочего места.
      */
-    public void addPlace(String loginOwner) {
-        Place place = new Place(loginOwner);
-        places.put(place.getId(), place);
+    public void addPlace(String loginOwner) throws SQLException{
+        String insertDataSQL = "INSERT INTO Place (loginOwner, placeType, seats) VALUES (?, WORKPLACE, 1)";
+        PreparedStatement preparedStatement = connection.prepareStatement(insertDataSQL);
+        preparedStatement.setString(1, loginOwner);
+        preparedStatement.executeUpdate();
     }
 
     /**
@@ -40,16 +42,38 @@ public final class PlaceDAO {
      * @param loginOwner Логин владельца конференц-зала.
      * @param seats Количество мест в конференц-зале.
      */
-    public void addConferenseRoom(String loginOwner, int seats) {
-        Place place = new Place(loginOwner, seats);
-        places.put(place.getId(), place);
+    public void addConferenseRoom(String loginOwner, int seats) throws SQLException{
+        String request = "INSERT INTO Place (loginOwner, placeType, seats) VALUES (?, CONFERENCEROOM, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(request);
+        preparedStatement.setString(1, loginOwner);
+        preparedStatement.setInt(2, seats);
+        preparedStatement.executeUpdate();
     }
 
     /**
      * Получает список всех мест.
      * @return Список мест.
      */
-    public Map<Integer, Place> getPlaces() {
+    public Map<Integer, Place> getPlaces() throws SQLException{
+        String request = "SELECT * FROM Place";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(request);
+        return resultForMap(resultSet);
+    }
+
+    /**
+     * Вспомогательная функция для получение мест в виде Map.
+     * @return Список мест.
+     */
+    private Map<Integer, Place> resultForMap(ResultSet resultSet) throws SQLException{
+        Map<Integer, Place> places = new HashMap<>();
+        while(resultSet.next()) {
+            int id = resultSet.getInt("placeId");
+            String placeType = resultSet.getString("placeType");
+            String loginOwner = resultSet.getString("loginOwner");
+            int seats = resultSet.getInt("seats");
+            places.put(id, new Place(id, loginOwner, placeType, seats));
+        }
         return places;
     }
 
@@ -57,18 +81,22 @@ public final class PlaceDAO {
      * Получает список всех рабочих мест.
      * @return Список рабочих мест.
      */
-    public Map<Integer, Place> getWorkPlaces() {
-        return places.entrySet().stream().filter(entry -> entry.getValue().getPlaceType() == PlaceType.WORKPLACE)
-        .collect(Collectors.toMap(Map.Entry<Integer, Place>::getKey, Map.Entry<Integer, Place>::getValue));
+    public Map<Integer, Place> getWorkPlaces() throws SQLException{
+        String request = "SELECT * FROM Place WHERE placeType='WORKPLACE'";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(request);
+        return resultForMap(resultSet);
     }
 
     /**
      * Получает список всех конференц-залов.
      * @return Список конференц-залов.
      */
-    public Map<Integer, Place> getPlacesConferenceRoom() {
-        return places.entrySet().stream().filter(entry -> entry.getValue().getPlaceType() == PlaceType.CONFERENCEROOM)
-        .collect(Collectors.toMap(Map.Entry<Integer, Place>::getKey, Map.Entry<Integer, Place>::getValue));
+    public Map<Integer, Place> getPlacesConferenceRoom() throws SQLException{
+        String request = "SELECT * FROM Place WHERE placeType='CONFERENCEROOM'";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(request);
+        return resultForMap(resultSet);
     }
 
     /**
@@ -76,16 +104,30 @@ public final class PlaceDAO {
      * @param id Идентификатор рабочего места.
      * @return Место или null, если место с таким идентификатором не найдено.
      */
-    public Place getPlace(int id) {
-        return places.get(id);
+    public Place getPlace(int id) throws SQLException{
+        Place place = null;
+        String request = "SELECT * FROM Place WHERE placeId=?";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if(resultSet.next()) {
+            String placeType = resultSet.getString("placeType");
+            String loginOwner = resultSet.getString("loginOwner");
+            int seats = resultSet.getInt("seats");
+            place = new Place(id, placeType, loginOwner, seats);
+        }
+        return place;
     }
 
     /**
      * Удаляет место из списка по его идентификатору.
      * @param id Идентификатор места для удаления.
      */
-    public void deletePlace(int id) {
-        places.remove(id);
+    public void deletePlace(int id) throws SQLException {
+        String request = "DELETE FROM Place WHERE placeId=?";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setInt(1, id);
+        statement.executeUpdate();
     }
 
     /**
@@ -93,8 +135,17 @@ public final class PlaceDAO {
      * @param id Идентификатор места.
      * @return True если место существует иначе False. 
      */
-    public boolean exist(int id) {
-        return (places.get(id) != null) ?  true : false;
+    public boolean exist(int id) throws SQLException{
+        String request = "SELECT EXISTS(SELECT 1 FROM Place WHERE id=?)";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if(resultSet.next()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -102,8 +153,10 @@ public final class PlaceDAO {
      * @param loginOwner
      * @return Список мест.
      */
-    public Map<Integer, Place> getPlacesOneOwner(String loginOwner) {
-        return places.entrySet().stream().filter(p -> p.getValue().getLoginOwner().equals(loginOwner))
-        .collect(Collectors.toMap(Map.Entry<Integer, Place>::getKey, Map.Entry<Integer, Place>::getValue));
+    public Map<Integer, Place> getPlacesOneOwner(String loginOwner) throws SQLException{
+        String request = "SELECT * FROM Place WHERE loginOwner=?";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setString(1, loginOwner);
+        return resultForMap(statement.executeQuery());
     }
 }

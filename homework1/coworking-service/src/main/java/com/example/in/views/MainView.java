@@ -57,7 +57,11 @@ public class MainView {
             switch (str) {
                 case "search":
                     System.out.println("Список всех зарегистрированных мест: ");
-                    mainController.search();
+                    try {
+                        mainController.search();
+                    } catch (Exception e) {
+                        sayError(e.getMessage());
+                    }
                     break;
                 case "searchDay":
                     System.out.println("Введите дату в формате dd.MM.yyyy:");
@@ -70,7 +74,11 @@ public class MainView {
                     break;
                 case "publ":
                     System.out.println("Места опубликованные вами: ");
-                    mainController.myPublication();
+                    try {
+                        mainController.myPublication();
+                    } catch (Exception e) {
+                        sayError(e.getMessage());
+                    }
                     break;
                 case "reserv":
                     reservAction();
@@ -89,7 +97,11 @@ public class MainView {
      */
     public void reservAction() {
         String str = new String();
-        mainController.reservOut();
+        try {
+            mainController.reservOut();
+        } catch (Exception e) {
+            sayError(e.getMessage());
+        }
         while (true) {
             System.out.println("Редактировать бронь(update)/Удалить бронь(delete)/Фильтрация списка(filter)/Выход в меню(exit):");
             str = scanner.nextLine();
@@ -133,10 +145,18 @@ public class MainView {
                             System.out.println("Введите тип места(conference/work):");
                             String type = scanner.nextLine();
                             if(type.equals("conference")) {
-                                mainController.filterForType(type);
+                                try {
+                                    mainController.filterForType(type);
+                                } catch (Exception e) {
+                                    sayError(e.getMessage());
+                                }
                             }
                             else if(type.equals("work")) {
-                                mainController.filterForType(type);
+                                try {
+                                    mainController.filterForType(type);
+                                } catch (Exception e) {
+                                    sayError(e.getMessage());
+                                }
                             }
                             else {
                                 sayError("Такого типа места не существует!");

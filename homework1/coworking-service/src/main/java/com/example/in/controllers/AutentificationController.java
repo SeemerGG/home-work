@@ -1,6 +1,7 @@
 package com.example.in.controllers;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
 import com.example.in.security.PasswordHashing;
 import com.example.in.views.AutentificationView;
@@ -39,7 +40,7 @@ public class AutentificationController {
      * @param password Пароль пользователя.
      * @throws NoSuchAlgorithmException Если алгоритм хеширования не поддерживается.
      */
-    public void authorization(String login, String password) throws NoSuchAlgorithmException {
+    public void authorization(String login, String password) throws NoSuchAlgorithmException, SQLException {
         User user = userDAO.getUser(login);
         try {
             if(user != null) {
