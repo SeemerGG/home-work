@@ -6,12 +6,9 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
    <changeSet id="addConstraintsForPlaceTable" author="Seemer">
-        <sql>
-            ALTER TABLE Place 
-            ADD 
-            CONSTRAINT chkPlaceType CHECK  (placeType IN ('   
-WORKPLACE', 'CONFERENCEROOM')),
-            CONSTRAINT seatsPositive CHECK (seats > 0);
+        <sql >
+            ALTER TABLE place ADD CONSTRAINT chkPlaceType CHECK  (place_type IN ('WORKPLACE', 'CONFERENCEROOM'));
+            ALTER TABLE place ADD CONSTRAINT seatsPositive CHECK (seats > 0);
         </sql>
    </changeSet>
 </databaseChangeLog>

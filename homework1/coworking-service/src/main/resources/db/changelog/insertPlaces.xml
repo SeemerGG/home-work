@@ -6,35 +6,35 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
    <changeSet id="insertPlaces" author="Seemer">
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="WORKPLACE"/>
-            <column name="seats" value=1/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="WORKPLACE"/>
+            <column name="seats" value="1"/>
         </insert>
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="WORKPLACE"/>
-            <column name="seats" value=1/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="WORKPLACE"/>
+            <column name="seats" value="1"/>
         </insert>
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="WORKPLACE"/>
-            <column name="seats" value=1/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="WORKPLACE"/>
+            <column name="seats" value="1"/>
         </insert>
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="CONFERENCEROOM"/>
-            <column name="seats" value=30/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="CONFERENCEROOM"/>
+            <column name="seats" value="30"/>
         </insert>
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="CONFERENCEROOM"/>
-            <column name="seats" value=45/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="CONFERENCEROOM"/>
+            <column name="seats" value="45"/>
         </insert>
-        <insert tableName="Place">
-            <column name="loginOwner" value="user0001"/>
-            <column name="placeType" value="CONFERENCEROOM"/>
-            <column name="seats" value=50/>
+        <insert tableName="place">
+            <column name="login_owner" value="user0001"/>
+            <column name="place_type" value="CONFERENCEROOM"/>
+            <column name="seats" value="50"/>
         </insert>
    </changeSet>
 </databaseChangeLog>

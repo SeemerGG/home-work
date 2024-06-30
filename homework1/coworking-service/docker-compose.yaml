@@ -10,6 +10,5 @@ services:
       - POSTGRES_PASSWORD=admin321
     image: postgres:12.19-alpine3.20
     volumes:
-      - ./src/main/resources/db/init-db:/docker-entrypoint-initdb.d
-volumes:
-  db-data:    
+      - ./src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+ 

@@ -20,6 +20,7 @@ public final class DBSingleton {
                 String dbUser = config.getString("db.user");
                 String dbPassword = config.getString("db.password");
                 instance = DriverManager.getConnection(dbHost, dbUser, dbPassword);
+                instance.setAutoCommit(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -31,7 +31,7 @@ public final class PlaceDAO {
      * @param loginOwner Логин владельца рабочего места.
      */
     public void addPlace(String loginOwner) throws SQLException{
-        String insertDataSQL = "INSERT INTO Place (loginOwner, placeType, seats) VALUES (?, WORKPLACE, 1)";
+        String insertDataSQL = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, WORKPLACE, 1)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertDataSQL);
         preparedStatement.setString(1, loginOwner);
         preparedStatement.executeUpdate();
@@ -43,7 +43,7 @@ public final class PlaceDAO {
      * @param seats Количество мест в конференц-зале.
      */
     public void addConferenseRoom(String loginOwner, int seats) throws SQLException{
-        String request = "INSERT INTO Place (loginOwner, placeType, seats) VALUES (?, CONFERENCEROOM, ?)";
+        String request = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, CONFERENCEROOM, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(request);
         preparedStatement.setString(1, loginOwner);
         preparedStatement.setInt(2, seats);
@@ -55,7 +55,7 @@ public final class PlaceDAO {
      * @return Список мест.
      */
     public Map<Integer, Place> getPlaces() throws SQLException{
-        String request = "SELECT * FROM Place";
+        String request = "SELECT * FROM \"place\"";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(request);
         return resultForMap(resultSet);
@@ -68,9 +68,9 @@ public final class PlaceDAO {
     private Map<Integer, Place> resultForMap(ResultSet resultSet) throws SQLException{
         Map<Integer, Place> places = new HashMap<>();
         while(resultSet.next()) {
-            int id = resultSet.getInt("placeId");
-            String placeType = resultSet.getString("placeType");
-            String loginOwner = resultSet.getString("loginOwner");
+            int id = resultSet.getInt("place_id");
+            String placeType = resultSet.getString("place_type");
+            String loginOwner = resultSet.getString("login_owner");
             int seats = resultSet.getInt("seats");
             places.put(id, new Place(id, loginOwner, placeType, seats));
         }
@@ -82,7 +82,7 @@ public final class PlaceDAO {
      * @return Список рабочих мест.
      */
     public Map<Integer, Place> getWorkPlaces() throws SQLException{
-        String request = "SELECT * FROM Place WHERE placeType='WORKPLACE'";
+        String request = "SELECT * FROM \"place\" WHERE place_type='WORKPLACE'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(request);
         return resultForMap(resultSet);
@@ -93,7 +93,7 @@ public final class PlaceDAO {
      * @return Список конференц-залов.
      */
     public Map<Integer, Place> getPlacesConferenceRoom() throws SQLException{
-        String request = "SELECT * FROM Place WHERE placeType='CONFERENCEROOM'";
+        String request = "SELECT * FROM \"place\" WHERE place_type='CONFERENCEROOM'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(request);
         return resultForMap(resultSet);
@@ -106,13 +106,13 @@ public final class PlaceDAO {
      */
     public Place getPlace(int id) throws SQLException{
         Place place = null;
-        String request = "SELECT * FROM Place WHERE placeId=?";
+        String request = "SELECT * FROM \"place\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
         if(resultSet.next()) {
-            String placeType = resultSet.getString("placeType");
-            String loginOwner = resultSet.getString("loginOwner");
+            String placeType = resultSet.getString("place_type");
+            String loginOwner = resultSet.getString("login_owner");
             int seats = resultSet.getInt("seats");
             place = new Place(id, placeType, loginOwner, seats);
         }
@@ -124,7 +124,7 @@ public final class PlaceDAO {
      * @param id Идентификатор места для удаления.
      */
     public void deletePlace(int id) throws SQLException {
-        String request = "DELETE FROM Place WHERE placeId=?";
+        String request = "DELETE FROM \"place\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         statement.executeUpdate();
@@ -136,7 +136,7 @@ public final class PlaceDAO {
      * @return True если место существует иначе False. 
      */
     public boolean exist(int id) throws SQLException{
-        String request = "SELECT EXISTS(SELECT 1 FROM Place WHERE id=?)";
+        String request = "SELECT EXISTS(SELECT 1 FROM \"place\" WHERE place_id=?)";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
@@ -154,7 +154,7 @@ public final class PlaceDAO {
      * @return Список мест.
      */
     public Map<Integer, Place> getPlacesOneOwner(String loginOwner) throws SQLException{
-        String request = "SELECT * FROM Place WHERE loginOwner=?";
+        String request = "SELECT * FROM \"place\" WHERE login_owner=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, loginOwner);
         return resultForMap(statement.executeQuery());

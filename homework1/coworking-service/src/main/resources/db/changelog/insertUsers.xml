@@ -6,11 +6,11 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
    <changeSet id="insertUsers" author="Seemer">
-        <insert tableName="User">
+        <insert tableName="user">
             <column name="login" value="user0001"/>
             <column name="password" value="36e5eebcf7aee8f72bc168e0f8ae6eed00d60446e9f7c03989ddea84ac7c8711"/>
         </insert>
-        <insert tableName="User">
+        <insert tableName="user">
             <column name="login" value="user0002"/>
             <column name="password" value="ae9a6aa038a92a456dc27a69746da4ec4f4fc490d411711c0f6c5ec01ba21656"/>
         </insert>

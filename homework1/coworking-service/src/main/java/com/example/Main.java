@@ -23,23 +23,27 @@ public class Main {
      * Создает экземпляр AutentificationController с новым UserDAO, запускает основной цикл приложения.
      * @param args аргументы командной строки (не используются)
      */
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) {
-        
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> { DBSingleton.closeConnection(); }));
-
         try {
             Connection connection = DBSingleton.getInstance();
             Database database =
                     DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            database.setDefaultSchemaName("workschema");
+            database.setLiquibaseSchemaName("liquibaseschema");
             Liquibase liquibase =
                     new Liquibase("db/changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update();
             System.out.println("Migration is completed successfully");
+
+            AutentificationController controller = new AutentificationController(new UserDAO());
+            controller.appRun();
+            // liquibase.close();
         } catch (LiquibaseException e) {
             System.out.println("SQL Exception in migration " + e.getMessage());
+        } finally {
+            DBSingleton.closeConnection();
         }
-
-        AutentificationController controller = new AutentificationController(new UserDAO());
-        controller.appRun();
+        
     }
 }

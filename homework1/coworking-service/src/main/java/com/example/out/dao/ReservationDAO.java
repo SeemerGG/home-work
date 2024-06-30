@@ -38,7 +38,7 @@ public final class ReservationDAO {
      * @return Список бронирований.
      */
     public Map<Integer, Reservation> getReservations() throws SQLException{
-        String request = "SELECT * FROM Reservation";
+        String request = "SELECT * FROM \"reservation\"";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(request);
         return resultForMap(resultSet);
@@ -47,12 +47,12 @@ public final class ReservationDAO {
     private Map<Integer, Reservation> resultForMap(ResultSet resultSet) throws SQLException {
         Map<Integer, Reservation> reservations = new HashMap<>();
         while(resultSet.next()) {
-            int id = resultSet.getInt("reservationId");
-            int placeId = resultSet.getInt("placeId");
+            int id = resultSet.getInt("reservation_id");
+            int placeId = resultSet.getInt("place_id");
             Date date = resultSet.getDate("date");
-            Time startTime = resultSet.getTime("startTime");
-            Time endTime = resultSet.getTime("endTime");
-            String clientLogin = resultSet.getString("clientLogin");
+            Time startTime = resultSet.getTime("start_time");
+            Time endTime = resultSet.getTime("end_time");
+            String clientLogin = resultSet.getString("client_login");
             reservations.put(id, new Reservation(id, placeId, clientLogin,
              date.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime()));
         }
@@ -67,16 +67,16 @@ public final class ReservationDAO {
      */
     public Reservation getReservation(int id) throws SQLException{
         Reservation reservation = null;
-        String request = "SELECT * FROM Reservation WHERE id=?";
+        String request = "SELECT * FROM \"reservation\" WHERE reservation_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
         if(resultSet.next()) {
-            int placeId = resultSet.getInt("placeId");
+            int placeId = resultSet.getInt("place_id");
             Date date = resultSet.getDate("date");
-            Time startTime = resultSet.getTime("startTime");
-            Time endTime = resultSet.getTime("endTime");
-            String clientLogin = resultSet.getString("clientLogin");
+            Time startTime = resultSet.getTime("start_time");
+            Time endTime = resultSet.getTime("end_time");
+            String clientLogin = resultSet.getString("client_login");
             reservation = new Reservation(id, placeId, clientLogin,
              date.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime());
         }
@@ -93,7 +93,7 @@ public final class ReservationDAO {
      */
     public void addReservation(int placeId, String clientLogin, LocalDate date, 
     LocalTime startTime, LocalTime endTime) throws SQLException{
-        String request = "INSERT INTO Reservation (placeId, clientLogin, startTime, endTime, date)"  +
+        String request = "INSERT INTO \"reservation\" (place_id, client_login, start_time, end_time, date)"  +
         "VALUES(?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, placeId);
@@ -109,7 +109,7 @@ public final class ReservationDAO {
      * @param placeId Идентификатор места, для которого нужно удалить бронирования.
      */
     public void deleteElementForPlaceId(int placeId) throws SQLException {
-        String request = "DELETE FROM Reservation WHERE placeId=?";
+        String request = "DELETE FROM \"reservation\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, placeId);
         statement.executeQuery();
@@ -122,7 +122,7 @@ public final class ReservationDAO {
      * @param endTime Новое время окончания бронирования.
      */
     public void updateTime(int id, LocalTime startTime, LocalTime endTime) throws SQLException{ 
-        String request = "UPDATE Reservation SET startTime=?, endTime=? WHERE id=?";
+        String request = "UPDATE \"reservation\" SET start_time=?, end_time=? WHERE reservation_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setTime(1, Time.valueOf(startTime));
         statement.setTime(2, Time.valueOf(endTime));
@@ -135,7 +135,7 @@ public final class ReservationDAO {
      * @param id Идентификатор бронирования, которое нужно удалить.
      */
     public void delete(int id) throws SQLException{
-        String request = "DELETE FROM Reservation WHERE id=?";
+        String request = "DELETE FROM \"reservation\" WHERE reservation_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         statement.executeQuery();
@@ -147,7 +147,7 @@ public final class ReservationDAO {
      * @return Список записей указанного типа.
      */
     public Collection<Reservation> getReservationsForType() throws SQLException { 
-        String request = "SELECT * FROM Reservation GROUP BY placeType";
+        String request = "SELECT * FROM \"reservation\" JOIN \"place\" ON \"reservation\".place_id=\"place\".place_id ORDER BY place_type";
         Statement statement = connection.createStatement();
         return resultForMap(statement.executeQuery(request)).values();
     }
@@ -158,7 +158,7 @@ public final class ReservationDAO {
      * @return Список записей на указаный день.
      */
     public Collection<Reservation> getReservationsForDate(LocalDate date) throws SQLException{
-        String request = "SELECT * FROM Reservation WHERE date=?";
+        String request = "SELECT * FROM \"reservation\" WHERE date=?";
         PreparedStatement statement  = connection.prepareStatement(request);
         statement.setDate(1, Date.valueOf(date));
         return resultForMap(statement.executeQuery()).values();
@@ -170,7 +170,7 @@ public final class ReservationDAO {
      * @return Список записей на указаное место.
      */
     public Collection<Reservation> getReservationsForPlace(int idPlace) throws SQLException{ 
-        String request = "SELECT * FROM Reservation WHERE placeId=?";
+        String request = "SELECT * FROM \"reservation\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, idPlace);
         return resultForMap(statement.executeQuery()).values();
@@ -182,7 +182,7 @@ public final class ReservationDAO {
      * @return Список записей указанного пользователя.
      */
     public Collection<Reservation> getReservationsForLogin(String login) throws SQLException { 
-        String request = "SELECT * FROM Reservation WHERE clientLogin=?";
+        String request = "SELECT * FROM \"reservation\" WHERE client_login=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
         return resultForMap(statement.executeQuery()).values();

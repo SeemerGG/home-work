@@ -6,20 +6,20 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
    <changeSet id="createReservationTable" author="Seemer">
-        <createTable schemaName="workSchema" tableName="Reservation">
-            <column name="reservationId" type="bigint" autoIncrement="true">
+        <createTable schemaName="workschema" tableName="reservation">
+            <column name="reservation_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="placeId" type="bigint">
+            <column name="place_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="clientLogin" type="varchar(128)">
+            <column name="client_login" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="startTime" type="TIME">
+            <column name="start_time" type="TIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="endTime" type="TIME">
+            <column name="end_time" type="TIME">
                 <constraints nullable="false"/>
             </column>
             <column name="date" type="DATE">

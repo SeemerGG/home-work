@@ -142,24 +142,10 @@ public class MainView {
                     String command = scanner.nextLine();
                     switch (command) {
                         case "type":
-                            System.out.println("Введите тип места(conference/work):");
-                            String type = scanner.nextLine();
-                            if(type.equals("conference")) {
-                                try {
-                                    mainController.filterForType(type);
-                                } catch (Exception e) {
-                                    sayError(e.getMessage());
-                                }
-                            }
-                            else if(type.equals("work")) {
-                                try {
-                                    mainController.filterForType(type);
-                                } catch (Exception e) {
-                                    sayError(e.getMessage());
-                                }
-                            }
-                            else {
-                                sayError("Такого типа места не существует!");
+                            try {
+                                mainController.filterForType();
+                            } catch (Exception e) {
+                                sayError(e.getMessage());
                             }
                             break;
                         case "date":

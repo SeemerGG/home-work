@@ -266,7 +266,7 @@ public class MainController {
      * Передает представлению список бронирований, соответствующих указанному типу места, для отображения.
      * @param param Тип места для фильтрации ('conference' или 'work').
      */
-    public void filterForType(String param) throws SQLException {
+    public void filterForType() throws SQLException {
         reservOut(reservationDAO.getReservationsForType());
     }
 

@@ -29,7 +29,7 @@ public final class UserDAO {
      */
     public List<User> getUsers() throws SQLException{
         List<User> users = new ArrayList<>();
-        String request = "SELECT * FROM User";
+        String request = "SELECT * FROM \"user\"";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(request);
         while (resultSet.next()) {
@@ -49,8 +49,9 @@ public final class UserDAO {
      * @return Найденный пользователь или null, если пользователь не найден.
      */
     public User getUser(String login) throws SQLException{
+        
         User user = null;
-        String request = "SELECT * FROM User WHERE login=?";
+        String request = "SELECT * FROM \"user\" WHERE login=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
         ResultSet resultSet = statement.executeQuery();
@@ -67,7 +68,7 @@ public final class UserDAO {
      * @param hashPassword Хэшированный пароль пользователя.
      */
     public void addUser(String login, String hashPassword) throws SQLException{
-        String request = "INSERT INTO Reservation (login, password) VALUES (?, ?)";
+        String request = "INSERT INTO \"user\" (login, password) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
         statement.setString(2, hashPassword);
