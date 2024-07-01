@@ -203,7 +203,6 @@ public class MainView {
                     try {
                         System.out.println("Введите тип места(conference/work):");
                         String type = scanner.nextLine();
-                        System.out.println(type);
                         if(type.equals("conference")) {
                             System.out.println("Введите количество мест в зале: ");
                             Integer i = Integer.parseInt(scanner.nextLine());

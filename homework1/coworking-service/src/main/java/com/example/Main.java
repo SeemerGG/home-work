@@ -38,7 +38,7 @@ public class Main {
 
             AutentificationController controller = new AutentificationController(new UserDAO());
             controller.appRun();
-            // liquibase.close();
+            liquibase.close();
         } catch (LiquibaseException e) {
             System.out.println("SQL Exception in migration " + e.getMessage());
         } finally {

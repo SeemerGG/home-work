@@ -31,7 +31,7 @@ public final class PlaceDAO {
      * @param loginOwner Логин владельца рабочего места.
      */
     public void addPlace(String loginOwner) throws SQLException{
-        String insertDataSQL = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, WORKPLACE, 1)";
+        String insertDataSQL = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, 'WORKPLACE', 1)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertDataSQL);
         preparedStatement.setString(1, loginOwner);
         preparedStatement.executeUpdate();
@@ -43,7 +43,7 @@ public final class PlaceDAO {
      * @param seats Количество мест в конференц-зале.
      */
     public void addConferenseRoom(String loginOwner, int seats) throws SQLException{
-        String request = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, CONFERENCEROOM, ?)";
+        String request = "INSERT INTO \"place\" (login_owner, place_type, seats) VALUES (?, 'CONFERENCEROOM', ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(request);
         preparedStatement.setString(1, loginOwner);
         preparedStatement.setInt(2, seats);
