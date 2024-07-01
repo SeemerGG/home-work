@@ -10,7 +10,7 @@ public class PlaceTest {
     @Test
     @DisplayName("Проверка корректности создания элемента.")
     void testGetId() {
-        Place place = new Place("testOwner") {};
+        Place place = new Place(1, "testOwner") {};
         assertTrue(place.getId() > 0, "ID должен быть положительным числом и уникальным для каждого экземпляра.");
     }
 
@@ -18,7 +18,7 @@ public class PlaceTest {
     @DisplayName("Проверка корректности логина созданного элемента.")
     void testGetLoginOwner() {
         String loginOwner = "testOwner";
-        Place place = new Place(loginOwner) {};
+        Place place = new Place(1, loginOwner) {};
         assertEquals(loginOwner, place.getLoginOwner(), "Логин владельца должен соответствовать заданному значению.");
     }
 
@@ -26,8 +26,8 @@ public class PlaceTest {
     @DisplayName("Проверка корректности строкового представления.")
     void testToString() {
         String loginOwner = "testOwner";
-        Place place = new Place(loginOwner) {};
-        String expectedString = "ID: " + place.getId() + "Логин собственника: " + loginOwner;
-        assertEquals(expectedString, place.toString(), "Метод toString должен корректно отображать информацию о месте.");
+        Place place = new Place(1, loginOwner) {};
+        String expectedString = "ID: " + 1 + " Логин собственника: " + loginOwner  + " Тип места: Рабочие место";
+        assertEquals(expectedString, place.toString(), " Метод toString должен корректно отображать информацию о месте.");
     }
 }

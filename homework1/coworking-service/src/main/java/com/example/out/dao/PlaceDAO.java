@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Place;
 
 /**
@@ -22,8 +21,8 @@ public final class PlaceDAO {
     /**
      * Конструктор.
      */
-    public PlaceDAO() {
-        connection = DBSingleton.getInstance();
+    public PlaceDAO(Connection connection) {
+        this.connection = connection;
     }
 
     /**

@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.User;
 
 
@@ -19,8 +18,8 @@ import com.example.model.User;
 public final class UserDAO {
     private Connection connection;
 
-    public UserDAO() {
-        connection = DBSingleton.getInstance();
+    public UserDAO(Connection connection) {
+        this.connection = connection;
     }
 
     /**

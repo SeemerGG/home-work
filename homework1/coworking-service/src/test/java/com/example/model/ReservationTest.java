@@ -20,7 +20,7 @@ public class ReservationTest {
 
     @BeforeEach
     void setUp() {
-        reservation = new Reservation(placeId, clientLogin, date, startTime, endTime);
+        reservation = new Reservation(1, placeId, clientLogin, date, startTime, endTime);
     }
 
     @Test

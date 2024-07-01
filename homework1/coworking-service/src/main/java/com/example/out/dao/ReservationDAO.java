@@ -15,7 +15,6 @@ import java.util.Map;
 import java.sql.Date;
 import java.sql.Time;
 
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Reservation;
 
 /**
@@ -29,8 +28,8 @@ public final class ReservationDAO {
     /**
      * Конструктор класса. 
      */
-    public ReservationDAO() {
-        connection = DBSingleton.getInstance();
+    public ReservationDAO(Connection connection) {
+        this.connection = connection;
     }
 
     /**

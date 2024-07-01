@@ -36,7 +36,7 @@ public class Main {
             liquibase.update();
             System.out.println("Migration is completed successfully");
 
-            AutentificationController controller = new AutentificationController(new UserDAO());
+            AutentificationController controller = new AutentificationController(new UserDAO(DBSingleton.getInstance()));
             controller.appRun();
             liquibase.close();
         } catch (LiquibaseException e) {
