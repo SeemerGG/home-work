@@ -1,6 +1,11 @@
 package com.example;
 
+import java.io.File;
 import java.sql.Connection;
+
+
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
 
 import com.example.in.controllers.AutentificationController;
 import com.example.infrastructure.database.DBSingleton;
@@ -10,7 +15,6 @@ import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
@@ -25,12 +29,16 @@ public class Main {
      */
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
+        Configurations configs = new Configurations();
         try {
+            Configuration config = configs.properties(new File("application.properties"));
+            String liquibaseSchema = config.getString("liquibase.currentSchema");
+            String defaultSchema = config.getString("liquibase.defaultSchema");
             Connection connection = DBSingleton.getInstance();
             Database database =
                     DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-            database.setDefaultSchemaName("workschema");
-            database.setLiquibaseSchemaName("liquibaseschema");
+            database.setDefaultSchemaName(defaultSchema);
+            database.setLiquibaseSchemaName(liquibaseSchema);
             Liquibase liquibase =
                     new Liquibase("db/changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update();
@@ -39,9 +47,10 @@ public class Main {
             AutentificationController controller = new AutentificationController(new UserDAO(DBSingleton.getInstance()));
             controller.appRun();
             liquibase.close();
-        } catch (LiquibaseException e) {
+        } catch (Exception e) {
             System.out.println("SQL Exception in migration " + e.getMessage());
-        } finally {
+        }
+        finally {
             DBSingleton.closeConnection();
         }
         
