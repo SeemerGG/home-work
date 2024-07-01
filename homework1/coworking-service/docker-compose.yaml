@@ -1,0 +1,14 @@
+services:
+  db:
+    container_name: db_coworking_service
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_NAME=db_cs
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin321
+    image: postgres:12.19-alpine3.20
+    volumes:
+      - ./src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+ 

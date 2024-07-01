@@ -40,7 +40,7 @@ public class AutentificationView {
             System.out.println("Вход(введите in)/Регистрация(введите up)/Выход(введите exit)");   
             str = scanner.nextLine();
             if(str.equals("exit")){
-                System.exit(0);
+                return;
             }
             switch (str) {
                 case "in":
