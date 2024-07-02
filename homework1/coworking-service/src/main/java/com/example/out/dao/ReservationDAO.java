@@ -142,13 +142,37 @@ public final class ReservationDAO {
 
     /**
      * Метод получения записей отсортированных по месту.
-     * @param Type Тип места.
+     * @param login Логин пользователя зарегистрировавшего запись.
      * @return Список записей указанного типа.
      */
-    public Collection<Reservation> getReservationsForType() throws SQLException { 
-        String request = "SELECT * FROM \"reservation\" JOIN \"place\" ON \"reservation\".place_id=\"place\".place_id ORDER BY place_type";
-        Statement statement = connection.createStatement();
-        return resultForMap(statement.executeQuery(request)).values();
+    public Collection<Reservation> getOrderedReservationByType(String login) throws SQLException { 
+        String request = "SELECT * FROM \"reservation\" JOIN \"place\" ON \"reservation\".place_id=\"place\".place_id WHERE client_login=? ORDER BY place_type";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setString(1, login);
+        return resultForMap(statement.executeQuery()).values();
+    }
+
+    /**
+     * Метод получения записей отсортированных по дате.
+     * @return Список записей указанного типа.
+     */
+    public Collection<Reservation> getOrderedReservationByDay(String login) throws SQLException { 
+        String request = "SELECT * FROM \"reservation\" WHERE client_login=? ORDER BY date";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setString(1, login);
+        return resultForMap(statement.executeQuery()).values();
+    }
+
+    /**
+     * Метод получения записей отсортированных по владельцу места.
+     * @param login Логин пользователя зарегистрировавшего запись.
+     * @return Список записей указанного типа.
+     */
+    public Collection<Reservation> getOrderedReservationByOwner(String login) throws SQLException { 
+        String request = "SELECT * FROM \"reservation\" JOIN \"place\" ON \"reservation\".place_id=\"place\".place_id WHERE client_login=? ORDER BY login_owner";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setString(1, login);
+        return resultForMap(statement.executeQuery()).values();
     }
 
      /**
@@ -169,7 +193,7 @@ public final class ReservationDAO {
      * @return Список записей на указаное место.
      */
     public Collection<Reservation> getReservationsForPlace(int idPlace) throws SQLException{ 
-        String request = "SELECT * FROM \"reservation\" WHERE place_id=?";
+        String request = "SELECT * FROM \"reservation\" WHERE place_id=? ";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, idPlace);
         return resultForMap(statement.executeQuery()).values();

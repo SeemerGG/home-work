@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+   <changeSet id="insertReservation" author="Seemer">
+        <insert tableName="reservation">
+            <column name="place_id" valueNumeric="1"/>
+            <column name="client_login" value="user0002"/>
+            <column name="start_time" value="09:00:00"/>
+            <column name="end_time" value="10:00:00"/>
+            <column name="date" value="2024-07-02"/>
+        </insert>
+        <insert tableName="reservation">
+            <column name="place_id" valueNumeric="5"/>
+            <column name="client_login" value="user0002"/>
+            <column name="start_time" value="09:00:00"/>
+            <column name="end_time" value="10:00:00"/>
+            <column name="date" value="2024-07-02"/>
+        </insert>
+        <insert tableName="reservation">
+            <column name="place_id" valueNumeric="4"/>
+            <column name="client_login" value="user0002"/>
+            <column name="start_time" value="09:00:00"/>
+            <column name="end_time" value="10:00:00"/>
+            <column name="date" value="2024-07-02"/>
+        </insert>
+        <insert tableName="reservation">
+            <column name="place_id" valueNumeric="3"/>
+            <column name="client_login" value="user0002"/>
+            <column name="start_time" value="09:00:00"/>
+            <column name="end_time" value="10:00:00"/>
+            <column name="date" value="2024-07-02"/>
+        </insert>
+   </changeSet>
+</databaseChangeLog>

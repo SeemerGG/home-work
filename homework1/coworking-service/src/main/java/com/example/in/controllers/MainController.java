@@ -5,9 +5,7 @@ import com.example.in.views.MainView;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -267,7 +265,7 @@ public class MainController {
      * @param param Тип места для фильтрации ('conference' или 'work').
      */
     public void filterForType() throws SQLException {
-        reservOut(reservationDAO.getReservationsForType());
+        reservOut(reservationDAO.getOrderedReservationByType(currUserLogin));
     }
 
     /**
@@ -275,9 +273,10 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
     public void filterForDate() throws SQLException{
-        List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
-        Collections.sort(reservations, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
-        reservOut(reservations);
+        // List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
+        // Collections.sort(reservations, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
+        // reservOut(reservations);
+        reservOut(reservationDAO.getOrderedReservationByDay(currUserLogin));
     }
 
     /**
@@ -285,20 +284,21 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
     public void filterForOwner() throws SQLException{
-        try {
-            List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
-            Collections.sort(reservations, (obj1, obj2) -> {
-                try {
-                    return placeDAO.getPlace(obj1.getPlaceId()).getLoginOwner().compareTo(placeDAO.getPlace(obj2.getPlaceId()).getLoginOwner());
-                } catch (SQLException e) {
-                    mainView.sayError(e.getMessage());
-                }
-                return 0;
-            });
-            reservOut(reservations);
-        } catch (Exception e) {
-            mainView.sayError(e.getMessage());
-        }
+        // try {
+        //     List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
+        //     Collections.sort(reservations, (obj1, obj2) -> {
+        //         try {
+        //             return placeDAO.getPlace(obj1.getPlaceId()).getLoginOwner().compareTo(placeDAO.getPlace(obj2.getPlaceId()).getLoginOwner());
+        //         } catch (SQLException e) {
+        //             mainView.sayError(e.getMessage());
+        //         }
+        //         return 0;
+        //     });
+        //     reservOut(reservations);
+        // } catch (Exception e) {
+        //     mainView.sayError(e.getMessage());
+        // }
+        reservOut(reservationDAO.getOrderedReservationByOwner(currUserLogin));
     }
 
     /**
