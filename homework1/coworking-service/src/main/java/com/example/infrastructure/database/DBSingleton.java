@@ -1,11 +1,10 @@
 package com.example.infrastructure.database;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.Configuration;
+import com.example.infrastructure.ConfigurationProperties;
+
 
 public final class DBSingleton {
 
@@ -13,12 +12,10 @@ public final class DBSingleton {
 
     public static Connection getInstance() {
         if(instance == null) {
-            Configurations configs = new Configurations();
             try {
-                Configuration config = configs.properties(new File("application.properties"));
-                String dbHost = config.getString("db.host");
-                String dbUser = config.getString("db.user");
-                String dbPassword = config.getString("db.password");
+                String dbHost = ConfigurationProperties.properties.getProperty("db.host");
+                String dbUser = ConfigurationProperties.properties.getProperty("db.user");
+                String dbPassword = ConfigurationProperties.properties.getProperty("db.password");
                 instance = DriverManager.getConnection(dbHost, dbUser, dbPassword);
                 instance.setAutoCommit(true);
             } catch (Exception e) {

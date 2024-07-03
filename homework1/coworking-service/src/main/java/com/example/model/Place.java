@@ -21,12 +21,7 @@ public class Place {
         this.id = id;
         this.loginOwner = loginOwner;
         this.seats = seats;
-        if(placeType.equals("WORKPLACE")) {
-            this.placeType = PlaceType.WORKPLACE;
-        }
-        else if(placeType.equals("CONFERENCEROOM")) {
-            this.placeType = PlaceType.CONFERENCEROOM;
-        }
+        this.placeType = PlaceType.valueOf(placeType);
     }
 
     /**

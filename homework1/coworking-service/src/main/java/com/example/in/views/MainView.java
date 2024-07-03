@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.example.in.controllers.MainController;
 import com.example.model.Place;
+import com.example.model.PlaceType;
 import com.example.model.Reservation;
 
 /**
@@ -209,10 +210,10 @@ public class MainView {
                             if(i < 1) { 
                                 throw new Exception("Количество мест в зале не может быть меньше 1!");
                             }
-                            mainController.createMyPlace(i);
+                            mainController.createMyPlace(i, PlaceType.CONFERENCEROOM);
                         }
                         else if(type.equals("work")) {
-                            mainController.createMyPlace();
+                            mainController.createMyPlace(1, PlaceType.WORKPLACE);
                         }     
                         else {
                             System.out.println("Неверная команда. Попробуйте снова: ");

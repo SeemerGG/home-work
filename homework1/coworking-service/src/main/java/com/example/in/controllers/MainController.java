@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.example.model.Place;
+import com.example.model.PlaceType;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
@@ -180,21 +181,12 @@ public class MainController {
     }
 
     /**
-     * Создает новое рабочее место для текущего пользователя.
-     * Добавляет рабочее место в базу данных и обновляет представление.
-     */
-    public void createMyPlace() throws SQLException {
-        placeDAO.addPlace(currUserLogin);
-        mainView.print("Добавление завершено!");
-    }
-
-    /**
      * Создает новый конференц-зал для текущего пользователя.
      * Добавляет конференц-зал с указанным количеством мест в систему и обновляет представление.
      * @param seats Количество мест в новом конференц-зале.
      */
-    public void createMyPlace(int seats) throws SQLException{
-        placeDAO.addConferenseRoom(currUserLogin, seats);
+    public void createMyPlace(int seats, PlaceType placeType) throws SQLException{
+        placeDAO.add(currUserLogin, seats, placeType);
         mainView.print("Добавление завершено!");
     }
 

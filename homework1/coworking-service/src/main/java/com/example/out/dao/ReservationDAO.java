@@ -46,14 +46,8 @@ public final class ReservationDAO {
     private Map<Integer, Reservation> resultForMap(ResultSet resultSet) throws SQLException {
         Map<Integer, Reservation> reservations = new HashMap<>();
         while(resultSet.next()) {
-            int id = resultSet.getInt("reservation_id");
-            int placeId = resultSet.getInt("place_id");
-            Date date = resultSet.getDate("date");
-            Time startTime = resultSet.getTime("start_time");
-            Time endTime = resultSet.getTime("end_time");
-            String clientLogin = resultSet.getString("client_login");
-            reservations.put(id, new Reservation(id, placeId, clientLogin,
-             date.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime()));
+            Reservation reservation = mappingResultSetToReservation(resultSet);
+            reservations.put(reservation.getId(), reservation);
         }
         return reservations;
     }
@@ -71,13 +65,7 @@ public final class ReservationDAO {
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
         if(resultSet.next()) {
-            int placeId = resultSet.getInt("place_id");
-            Date date = resultSet.getDate("date");
-            Time startTime = resultSet.getTime("start_time");
-            Time endTime = resultSet.getTime("end_time");
-            String clientLogin = resultSet.getString("client_login");
-            reservation = new Reservation(id, placeId, clientLogin,
-             date.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime());
+            reservation = mappingResultSetToReservation(resultSet);
         }
         return reservation;
     }
@@ -209,6 +197,16 @@ public final class ReservationDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
         return resultForMap(statement.executeQuery()).values();
+    }
+
+    private Reservation mappingResultSetToReservation(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("reservation_id");
+        int placeId = resultSet.getInt("place_id");
+        Date date = resultSet.getDate("date");
+        Time startTime = resultSet.getTime("start_time");
+        Time endTime = resultSet.getTime("end_time");
+        String clientLogin = resultSet.getString("client_login");
+        return new Reservation(id, placeId, clientLogin, date.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime());
     }
     
 }
