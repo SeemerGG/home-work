@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.example.in.controllers.MainController;
 import com.example.model.Place;
+import com.example.model.PlaceType;
 import com.example.model.Reservation;
 
 /**
@@ -57,7 +58,11 @@ public class MainView {
             switch (str) {
                 case "search":
                     System.out.println("Список всех зарегистрированных мест: ");
-                    mainController.search();
+                    try {
+                        mainController.search();
+                    } catch (Exception e) {
+                        sayError(e.getMessage());
+                    }
                     break;
                 case "searchDay":
                     System.out.println("Введите дату в формате dd.MM.yyyy:");
@@ -70,7 +75,11 @@ public class MainView {
                     break;
                 case "publ":
                     System.out.println("Места опубликованные вами: ");
-                    mainController.myPublication();
+                    try {
+                        mainController.myPublication();
+                    } catch (Exception e) {
+                        sayError(e.getMessage());
+                    }
                     break;
                 case "reserv":
                     reservAction();
@@ -89,7 +98,11 @@ public class MainView {
      */
     public void reservAction() {
         String str = new String();
-        mainController.reservOut();
+        try {
+            mainController.reservOut();
+        } catch (Exception e) {
+            sayError(e.getMessage());
+        }
         while (true) {
             System.out.println("Редактировать бронь(update)/Удалить бронь(delete)/Фильтрация списка(filter)/Выход в меню(exit):");
             str = scanner.nextLine();
@@ -130,16 +143,10 @@ public class MainView {
                     String command = scanner.nextLine();
                     switch (command) {
                         case "type":
-                            System.out.println("Введите тип места(conference/work):");
-                            String type = scanner.nextLine();
-                            if(type.equals("conference")) {
-                                mainController.filterForType(type);
-                            }
-                            else if(type.equals("work")) {
-                                mainController.filterForType(type);
-                            }
-                            else {
-                                sayError("Такого типа места не существует!");
+                            try {
+                                mainController.filterForType();
+                            } catch (Exception e) {
+                                sayError(e.getMessage());
                             }
                             break;
                         case "date":
@@ -197,17 +204,16 @@ public class MainView {
                     try {
                         System.out.println("Введите тип места(conference/work):");
                         String type = scanner.nextLine();
-                        System.out.println(type);
                         if(type.equals("conference")) {
                             System.out.println("Введите количество мест в зале: ");
                             Integer i = Integer.parseInt(scanner.nextLine());
                             if(i < 1) { 
                                 throw new Exception("Количество мест в зале не может быть меньше 1!");
                             }
-                            mainController.createMyPlace(i);
+                            mainController.createMyPlace(i, PlaceType.CONFERENCEROOM);
                         }
                         else if(type.equals("work")) {
-                            mainController.createMyPlace();
+                            mainController.createMyPlace(1, PlaceType.WORKPLACE);
                         }     
                         else {
                             System.out.println("Неверная команда. Попробуйте снова: ");

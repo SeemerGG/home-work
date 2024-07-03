@@ -1,13 +1,16 @@
 package com.example.in.controllers;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
 import com.example.in.security.PasswordHashing;
 import com.example.in.views.AutentificationView;
+import com.example.infrastructure.database.DBSingleton;
 import com.example.model.User;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.out.dao.UserDAO;
+
 
 /**
  * Класс AutentificationController управляет процессом аутентификации пользователя.
@@ -39,12 +42,12 @@ public class AutentificationController {
      * @param password Пароль пользователя.
      * @throws NoSuchAlgorithmException Если алгоритм хеширования не поддерживается.
      */
-    public void authorization(String login, String password) throws NoSuchAlgorithmException {
+    public void authorization(String login, String password) throws NoSuchAlgorithmException, SQLException {
         User user = userDAO.getUser(login);
         try {
             if(user != null) {
                 if(PasswordHashing.compareHashAndString(user.getPassword(), password)) {
-                    mainController = new MainController(login, new PlaceDAO(), new ReservationDAO());
+                    mainController = new MainController(login, new PlaceDAO(DBSingleton.getInstance()), new ReservationDAO(DBSingleton.getInstance()));
                     mainController.authorized(login);
                 }
                 else {
@@ -69,7 +72,7 @@ public class AutentificationController {
         try {
             String hashPassword = PasswordHashing.getPasswordHash(password);
             userDAO.addUser(login, hashPassword);
-            mainController = new MainController(login, new PlaceDAO(), new ReservationDAO());
+            mainController = new MainController(login, new PlaceDAO(DBSingleton.getInstance()), new ReservationDAO(DBSingleton.getInstance()));
             mainController.authorized(login);
         }
         catch(Exception e)

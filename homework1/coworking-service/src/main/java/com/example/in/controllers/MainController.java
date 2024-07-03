@@ -2,9 +2,10 @@ package com.example.in.controllers;
 
 import com.example.in.views.MainView;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class MainController {
      * Метод поиска всех мест.
      * Получает список всех рабочих мест и конференц-залов без учета их занятости и выводит его в представление.
      */
-    public void search() {
+    public void search() throws SQLException{
         mainView.printList(placeDAO.getPlaces().values());
     }
 
@@ -67,13 +68,13 @@ public class MainController {
      * Фильтрует бронирования по дате и выводит список мест с доступными временными интервалами.
      * @param date Дата, на которую осуществляется поиск.
      */
-    public void searchDay(LocalDate date) {
+    public void searchDay(LocalDate date) throws SQLException {
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
 
         Map<Integer, Place> places = placeDAO.getPlaces();
 
         Stream<Reservation> stream = reservationDAO.getReservationsForDate(date).stream();
-        Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlace().getId()));
+        Map<Integer, List<Reservation>> reservationsByPlace = stream.collect(Collectors.groupingBy(res -> res.getPlaceId()));
         reservationsByPlace.forEach((placeId, resList) -> {
             List<LocalTime> allIntervals = generatingAllTimeInterval();
             
@@ -82,7 +83,11 @@ public class MainController {
             }
 
             if(allIntervals.size() != 0) {
-                listPlacesWithTime.append(resList.get(0).getPlace().toString() + " : \n");
+                try {
+                    listPlacesWithTime.append(placeDAO.getPlace(resList.get(0).getPlaceId()).toString() + " : \n");
+                } catch (Exception e) {
+                    mainView.sayError(e.getMessage());
+                }
                 for (int i = 0; i < allIntervals.size() - 1; i++) {
                     listPlacesWithTime.append(allIntervals.get(i));
                     listPlacesWithTime.append(" - ");
@@ -119,7 +124,7 @@ public class MainController {
      * @param endTime Время окончания бронирования.
      * @param date День начала бронирования.
      */
-    public void reservating(Map<Integer, List<Reservation>> reservationByPlace, Integer idPlace, LocalTime starTime, LocalTime endTime, LocalDate date) {
+    public void reservating(Map<Integer, List<Reservation>> reservationByPlace, Integer idPlace, LocalTime starTime, LocalTime endTime, LocalDate date) throws SQLException{
         if(reservationByPlace.containsKey(idPlace)) {
             for(Reservation reserv : reservationByPlace.get(idPlace)) {
                 if(!reserv.getStartTime().isAfter(starTime) && 
@@ -127,14 +132,14 @@ public class MainController {
                     mainView.sayError("Указанный период уже занят (полностью или частично)!");
                 }
                 else {
-                    reservationDAO.addReservation(reservationByPlace.get(idPlace).get(0).getPlace(), 
-                    currUserLogin, reservationByPlace.get(idPlace).get(0).getDate(), starTime, endTime);
+                    reservationDAO.addReservation(idPlace, currUserLogin, 
+                    reservationByPlace.get(idPlace).get(0).getDate(), starTime, endTime);
                     mainView.print("Место успешно забронированно!");
                 }
             }
         }
         else if(placeDAO.exist(idPlace)){
-            reservationDAO.addReservation(placeDAO.getPlace(idPlace), currUserLogin, date, starTime, endTime); 
+            reservationDAO.addReservation(idPlace, currUserLogin, date, starTime, endTime); 
             mainView.print("Место успешно забронированно!");
         }
         else {
@@ -157,7 +162,7 @@ public class MainController {
     /**
      * Метод ищет все места зарегистрированные на логин текущего пользователя и передает их представлению для вывода.
      */
-    public void myPublication() {
+    public void myPublication() throws SQLException{
         mainView.myPlaceAction(placeDAO.getPlacesOneOwner(currUserLogin));
     }
 
@@ -176,21 +181,12 @@ public class MainController {
     }
 
     /**
-     * Создает новое рабочее место для текущего пользователя.
-     * Добавляет рабочее место в базу данных и обновляет представление.
-     */
-    public void createMyPlace() {
-        placeDAO.addPlace(currUserLogin);
-        mainView.print("Добавление завершено!");
-    }
-
-    /**
      * Создает новый конференц-зал для текущего пользователя.
      * Добавляет конференц-зал с указанным количеством мест в систему и обновляет представление.
      * @param seats Количество мест в новом конференц-зале.
      */
-    public void createMyPlace(int seats) {
-        placeDAO.addConferenseRoom(currUserLogin, seats);
+    public void createMyPlace(int seats, PlaceType placeType) throws SQLException{
+        placeDAO.add(currUserLogin, seats, placeType);
         mainView.print("Добавление завершено!");
     }
 
@@ -201,7 +197,7 @@ public class MainController {
      * @param startTime Новое время начала бронирования.
      * @param endTime Новое время окончания бронирования.
      */
-    public void updateTime(int id, LocalTime startTime, LocalTime endTime) {
+    public void updateTime(int id, LocalTime startTime, LocalTime endTime) throws SQLException{
         Reservation reservation = reservationDAO.getReservation(id);
         try {
             if(id<0||reservation == null){
@@ -209,7 +205,7 @@ public class MainController {
             }
             else {
                 List<Reservation> listReserv = reservationDAO.getReservationsForDate(reservation.getDate()).stream().filter(res -> 
-                res.getPlace().getId() == reservation.getPlace().getId()).toList();
+                res.getPlaceId() == reservation.getPlaceId()).toList();
                 listReserv.remove(id);
                 for(Reservation reserv : listReserv) {
                     if(!reserv.getStartTime().isAfter(startTime) && 
@@ -232,8 +228,8 @@ public class MainController {
      * Генерирует список всех бронирований текущего пользователя ввиде строки.
      * Передает полученную строку в представление для отображения.
      */
-    public void reservOut() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
+    public void reservOut() throws SQLException{
+        Collection<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
         StringBuilder sb = new StringBuilder();
         for(Reservation res : list) {
             sb.append(res.toString());
@@ -260,33 +256,41 @@ public class MainController {
      * Передает представлению список бронирований, соответствующих указанному типу места, для отображения.
      * @param param Тип места для фильтрации ('conference' или 'work').
      */
-    public void filterForType(String param) {
-        if(param.equals("conference")) {
-            reservOut(reservationDAO.getReservationsForType(PlaceType.CONFERENCEROOM));
-        }
-        else if(param.equals("work")) {
-            reservOut(reservationDAO.getReservationsForType(PlaceType.WORKPLACE));
-        }
+    public void filterForType() throws SQLException {
+        reservOut(reservationDAO.getOrderedReservationByType(currUserLogin));
     }
 
     /**
      * Фильтрует бронирования по дате.
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
-    public void filterForDate() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
-        Collections.sort(list, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
-        reservOut(list);
+    public void filterForDate() throws SQLException{
+        // List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
+        // Collections.sort(reservations, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
+        // reservOut(reservations);
+        reservOut(reservationDAO.getOrderedReservationByDay(currUserLogin));
     }
 
     /**
      * Фильтрует бронирования по владельцу места.
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
-    public void filterForOwner() {
-        List<Reservation> list = reservationDAO.getReservationsForLogin(currUserLogin);
-        Collections.sort(list, (obj1, obj2) -> obj1.getPlace().getLoginOwner().compareTo(obj2.getPlace().getLoginOwner()));
-        reservOut(list);
+    public void filterForOwner() throws SQLException{
+        // try {
+        //     List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
+        //     Collections.sort(reservations, (obj1, obj2) -> {
+        //         try {
+        //             return placeDAO.getPlace(obj1.getPlaceId()).getLoginOwner().compareTo(placeDAO.getPlace(obj2.getPlaceId()).getLoginOwner());
+        //         } catch (SQLException e) {
+        //             mainView.sayError(e.getMessage());
+        //         }
+        //         return 0;
+        //     });
+        //     reservOut(reservations);
+        // } catch (Exception e) {
+        //     mainView.sayError(e.getMessage());
+        // }
+        reservOut(reservationDAO.getOrderedReservationByOwner(currUserLogin));
     }
 
     /**
@@ -294,7 +298,7 @@ public class MainController {
      * Принимает список бронирований и передает его представлению для вывода пользователю.
      * @param list Список бронирований для вывода.
      */
-    public void reservOut(List<Reservation> list) {
+    public void reservOut(Collection<Reservation> list) {
         StringBuilder sb = new StringBuilder();
         for(Reservation res : list) {
             sb.append(res.toString());
@@ -302,5 +306,4 @@ public class MainController {
         }
         mainView.print(sb.toString());
     }
-
 }

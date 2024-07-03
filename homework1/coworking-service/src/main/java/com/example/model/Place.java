@@ -5,7 +5,6 @@ package com.example.model;
  * Этот класс служит базой для всех типов мест, которые могут быть забронированы.
  */
 public class Place {
-    private static int last_id = 0;
     private int id;
     private String loginOwner;
     private PlaceType placeType;
@@ -13,10 +12,25 @@ public class Place {
     
     /**
      * Конструктор для создания нового места.
+     * @param id Идентификатор места.
+     * @param loginOwner Логин владельца места.
+     * @param placeType Тип места. (CONFERENCEROOM, WORKPLACE)
+     * @param seats Количество мест.
+     */
+    public Place(int id, String loginOwner, String placeType, int seats) {
+        this.id = id;
+        this.loginOwner = loginOwner;
+        this.seats = seats;
+        this.placeType = PlaceType.valueOf(placeType);
+    }
+
+    /**
+     * Альтернативный конструктор для создания нового рабочего места.
+     * @param id Идентификатор места.
      * @param loginOwner Логин владельца места.
      */
-    public Place(String loginOwner) {
-        this.id = ++last_id;
+    public Place(int id, String loginOwner) {
+        this.id = id;
         this.loginOwner = loginOwner;
         this.placeType = PlaceType.WORKPLACE;
         this.seats = 1;
@@ -24,11 +38,12 @@ public class Place {
 
     /**
      * Альтернативный конструктор для создания нового места (конференц зала).
+     * @param id Идентификатор места.
      * @param loginOwner Логин владельца места.
      * @param seats Количество мест
      */
-    public Place(String loginOwner, int seats) {
-        this(loginOwner);
+    public Place(int id, String loginOwner, int seats) {
+        this(id, loginOwner);
         this.placeType = PlaceType.CONFERENCEROOM;
         this.seats = seats;
     }
