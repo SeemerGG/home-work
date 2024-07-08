@@ -10,11 +10,13 @@
             baseTableName="reservation"
             constraintName="fkPlaceReservationId"
             referencedColumnNames="place_id"
-            referencedTableName="place"/>
+            referencedTableName="place"
+            onDelete="CASCADE"/>
         <addForeignKeyConstraint baseColumnNames="client_login"
             baseTableName="reservation"
             constraintName="fkReservationUser"
             referencedColumnNames="login"
-            referencedTableName="user"/>
+            referencedTableName="user"
+            onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

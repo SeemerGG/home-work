@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -172,7 +173,13 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE date=?";
         PreparedStatement statement  = connection.prepareStatement(request);
         statement.setDate(1, Date.valueOf(date));
-        return resultForMap(statement.executeQuery()).values();
+        ResultSet resultSet = statement.executeQuery();
+        Collection<Reservation> reservs = new ArrayList<>();
+        while(resultSet.next()) {
+            Reservation reservation = mappingResultSetToReservation(resultSet);
+            reservs.add(reservation);
+        }
+        return reservs;
     }
 
     /**
@@ -184,7 +191,13 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE place_id=? ";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, idPlace);
-        return resultForMap(statement.executeQuery()).values();
+        ResultSet resultSet = statement.executeQuery();
+        Collection<Reservation> reservs = new ArrayList<>();
+        while(resultSet.next()) {
+            Reservation reservation = mappingResultSetToReservation(resultSet);
+            reservs.add(reservation);
+        }
+        return reservs;
     }
 
     /**
@@ -196,9 +209,40 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE client_login=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
-        return resultForMap(statement.executeQuery()).values();
+        ResultSet resultSet = statement.executeQuery();
+        Collection<Reservation> reservs = new ArrayList<>();
+        while(resultSet.next()) {
+            Reservation reservation = mappingResultSetToReservation(resultSet);
+            reservs.add(reservation);
+        }
+        return reservs;
     }
 
+    /**
+     * Метод получения записей с определенным местом и датой.
+     * @param idPlace Идентификатор места.
+     * @param date Дата на которую произведена запись.
+     * @return Список записей указанного пользователя.
+     */
+    public Collection<Reservation> getReservationsForDateAndPlace(int idPlace, LocalDate date) throws SQLException { 
+        String request = "SELECT * FROM \"reservation\" WHERE place_id=? AND date=?";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setInt(1, idPlace);
+        statement.setDate(2, Date.valueOf(date));
+        ResultSet resultSet = statement.executeQuery();
+        Collection<Reservation> reservs = new ArrayList<>();
+        while(resultSet.next()) {
+            Reservation reservation = mappingResultSetToReservation(resultSet);
+            reservs.add(reservation);
+        }
+        return reservs;
+    }
+    /**
+     * Вспомогательный метод мапинга объекта ResultSet.
+     * @param resultSet
+     * @return
+     * @throws SQLException
+     */
     private Reservation mappingResultSetToReservation(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("reservation_id");
         int placeId = resultSet.getInt("place_id");

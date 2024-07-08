@@ -265,9 +265,6 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
     public void filterForDate() throws SQLException{
-        // List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
-        // Collections.sort(reservations, (obj1, obj2) -> obj1.getDate().compareTo(obj2.getDate()));
-        // reservOut(reservations);
         reservOut(reservationDAO.getOrderedReservationByDay(currUserLogin));
     }
 
@@ -276,20 +273,6 @@ public class MainController {
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
     public void filterForOwner() throws SQLException{
-        // try {
-        //     List<Reservation> reservations = new ArrayList<>(reservationDAO.getReservationsForLogin(currUserLogin));
-        //     Collections.sort(reservations, (obj1, obj2) -> {
-        //         try {
-        //             return placeDAO.getPlace(obj1.getPlaceId()).getLoginOwner().compareTo(placeDAO.getPlace(obj2.getPlaceId()).getLoginOwner());
-        //         } catch (SQLException e) {
-        //             mainView.sayError(e.getMessage());
-        //         }
-        //         return 0;
-        //     });
-        //     reservOut(reservations);
-        // } catch (Exception e) {
-        //     mainView.sayError(e.getMessage());
-        // }
         reservOut(reservationDAO.getOrderedReservationByOwner(currUserLogin));
     }
 

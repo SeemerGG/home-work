@@ -108,6 +108,8 @@ public class PlaceDAOTest {
             int id = 1; 
             assertTrue(placeDAO.exist(id), "Место до удаления должно существовать");
             placeDAO.deletePlace(id);
+            System.out.println(placeDAO.getPlaces());
+            System.out.println(placeDAO.exist(id));
             assertFalse(placeDAO.exist(id), "Место после удаления не должно существовать");
         } catch (Exception e) {
             System.out.println(e.getMessage());

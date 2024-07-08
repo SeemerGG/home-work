@@ -123,12 +123,7 @@ public final class PlaceDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
-        if(resultSet.next()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return resultSet.getBoolean("exists");
     }
 
     /**

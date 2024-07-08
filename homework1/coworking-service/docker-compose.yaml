@@ -5,7 +5,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_NAME=db_cs
+      - POSTGRES_NAME=coworking
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin321
     image: postgres:12.19-alpine3.20

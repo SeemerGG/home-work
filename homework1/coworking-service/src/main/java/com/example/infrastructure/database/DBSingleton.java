@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 
 import com.example.infrastructure.ConfigurationProperties;
 
-
 public final class DBSingleton {
 
     private static Connection instance;
@@ -13,6 +12,7 @@ public final class DBSingleton {
     public static Connection getInstance() {
         if(instance == null) {
             try {
+                Class.forName("org.postgresql.Driver");
                 String dbHost = ConfigurationProperties.properties.getProperty("db.host");
                 String dbUser = ConfigurationProperties.properties.getProperty("db.user");
                 String dbPassword = ConfigurationProperties.properties.getProperty("db.password");

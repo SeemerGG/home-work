@@ -13,13 +13,13 @@ import com.example.in.service.AutentificationService;
 import com.example.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebServlet("/auth")
-public class AutentificationServlet extends HttpServlet {
+@WebServlet("/registr")
+public class RegistrationServlet extends HttpServlet{
 
     private final ObjectMapper objectMapper;
     private final AutentificationService autentificationService;
 
-    public AutentificationServlet() {
+    public RegistrationServlet() {
         this.objectMapper = new ObjectMapper();
         this.autentificationService = new AutentificationService();
     }
@@ -34,7 +34,7 @@ public class AutentificationServlet extends HttpServlet {
         }
         User user = objectMapper.readValue(jsonString.toString(), User.class);
         try {
-            String token = autentificationService.authorization(user);
+            String token = autentificationService.registration(user);
             resp.setHeader("Authorization", "Bearer " + token);
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
