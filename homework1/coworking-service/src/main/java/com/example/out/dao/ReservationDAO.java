@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +44,9 @@ public final class ReservationDAO {
     }
 
     private Map<Integer, Reservation> resultForMap(ResultSet resultSet) throws SQLException {
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         Map<Integer, Reservation> reservations = new HashMap<>();
         while(resultSet.next()) {
             Reservation reservation = mappingResultSetToReservation(resultSet);
@@ -65,6 +67,9 @@ public final class ReservationDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         if(resultSet.next()) {
             reservation = mappingResultSetToReservation(resultSet);
         }
@@ -100,7 +105,7 @@ public final class ReservationDAO {
         String request = "DELETE FROM \"reservation\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, placeId);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -115,7 +120,7 @@ public final class ReservationDAO {
         statement.setTime(1, Time.valueOf(startTime));
         statement.setTime(2, Time.valueOf(endTime));
         statement.setInt(3, id);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -126,7 +131,7 @@ public final class ReservationDAO {
         String request = "DELETE FROM \"reservation\" WHERE reservation_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -173,13 +178,7 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE date=?";
         PreparedStatement statement  = connection.prepareStatement(request);
         statement.setDate(1, Date.valueOf(date));
-        ResultSet resultSet = statement.executeQuery();
-        Collection<Reservation> reservs = new ArrayList<>();
-        while(resultSet.next()) {
-            Reservation reservation = mappingResultSetToReservation(resultSet);
-            reservs.add(reservation);
-        }
-        return reservs;
+        return resultForMap(statement.executeQuery()).values();
     }
 
     /**
@@ -191,13 +190,7 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE place_id=? ";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, idPlace);
-        ResultSet resultSet = statement.executeQuery();
-        Collection<Reservation> reservs = new ArrayList<>();
-        while(resultSet.next()) {
-            Reservation reservation = mappingResultSetToReservation(resultSet);
-            reservs.add(reservation);
-        }
-        return reservs;
+        return resultForMap(statement.executeQuery()).values();
     }
 
     /**
@@ -209,13 +202,7 @@ public final class ReservationDAO {
         String request = "SELECT * FROM \"reservation\" WHERE client_login=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, login);
-        ResultSet resultSet = statement.executeQuery();
-        Collection<Reservation> reservs = new ArrayList<>();
-        while(resultSet.next()) {
-            Reservation reservation = mappingResultSetToReservation(resultSet);
-            reservs.add(reservation);
-        }
-        return reservs;
+        return resultForMap(statement.executeQuery()).values();
     }
 
     /**
@@ -229,13 +216,7 @@ public final class ReservationDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, idPlace);
         statement.setDate(2, Date.valueOf(date));
-        ResultSet resultSet = statement.executeQuery();
-        Collection<Reservation> reservs = new ArrayList<>();
-        while(resultSet.next()) {
-            Reservation reservation = mappingResultSetToReservation(resultSet);
-            reservs.add(reservation);
-        }
-        return reservs;
+        return resultForMap(statement.executeQuery()).values();
     }
     /**
      * Вспомогательный метод мапинга объекта ResultSet.

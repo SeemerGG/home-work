@@ -1,25 +1,24 @@
 package com.example.in.service;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
-import com.example.out.dao.UserDAO;
 
 public class ReservationService {
 
-    private final UserDAO userDAO;
     private final PlaceDAO placeDAO;
     private final ReservationDAO reservationDAO;
 
 
     public ReservationService() {
-        this.userDAO = new UserDAO(DBSingleton.getInstance());
         this.placeDAO = new PlaceDAO(DBSingleton.getInstance());
         this.reservationDAO = new ReservationDAO(DBSingleton.getInstance());
     }
@@ -55,5 +54,69 @@ public class ReservationService {
             throw new Exception("Неверно указан ID места!");
         }
         return false;
+    }
+
+    /**
+     * Удаляет бронирование по его идентификатору.
+     * Удаляет бронирование из системы и обновляет представление.
+     * @param id Идентификатор бронирования для удаления.
+     */
+    public void deleteReservaton(int id, String login) throws Exception{
+        if(reservationDAO.getReservation(id).getClientLogin().equals(login)) {
+            reservationDAO.delete(id);
+        }
+        else {
+            throw new Exception("Недостаточно прав.");
+        } 
+    }
+
+    /**
+     * Обновляет время бронирования для указанного идентификатора.
+     * Проверяет наличие конфликтов с существующими бронированиями и обновляет время, если это возможно.
+     * @param id Идентификатор бронирования для обновления.
+     * @param startTime Новое время начала бронирования.
+     * @param endTime Новое время окончания бронирования.
+     */
+    public void updateTime(int id, LocalTime startTime, LocalTime endTime, String login) throws Exception{
+        Reservation reservation = reservationDAO.getReservation(id);
+        if(!reservation.getClientLogin().equals(login)) {
+            throw new Exception("Не достаточно прав.");
+        }
+        List<Reservation> listReserv = new ArrayList<>(reservationDAO.getReservationsForDateAndPlace(id, reservation.getDate()));
+        listReserv.removeIf(res -> res.getId() == id);
+        for(Reservation reserv : listReserv) {
+            if(!reserv.getStartTime().isAfter(startTime) && 
+            !reserv.getEndTime().isAfter(endTime)) {
+                throw new Exception("Указанное время заняно.");
+            }
+            else {
+                reservationDAO.updateTime(id, startTime, endTime);
+            }
+        }
+    }
+
+    /**
+     * Фильтрует бронирования по типу места.
+     * Передает представлению список бронирований, соответствующих указанному типу места, для отображения.
+     * @param param Тип места для фильтрации ('conference' или 'work').
+     */
+    public Collection<Reservation> filterForType(String login) throws SQLException {
+        return reservationDAO.getOrderedReservationByType(login);
+    }
+
+    /**
+     * Фильтрует бронирования по дате.
+     * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
+     */
+    public Collection<Reservation> filterForDate(String login) throws SQLException{
+        return reservationDAO.getOrderedReservationByDay(login);
+    }
+
+    /**
+     * Фильтрует бронирования по владельцу места.
+     * Сортирует и передает представлению список бронирований пользователя по владельцу места.
+     */
+    public Collection<Reservation> filterForOwner(String login) throws SQLException{
+        return reservationDAO.getOrderedReservationByOwner(login);
     }
 }

@@ -23,9 +23,6 @@ public class SearchDayServlet extends HttpServlet {
 
     public SearchDayServlet() {
         this.objectMapper = new ObjectMapper().findAndRegisterModules();
-
-        // Value format = JsonFormat.Value.forPattern("dd-MM-yy");
-        // objectMapper.configOverride(LocalDate.class).setFormat(format);
         this.searchService = new SearchService();
     }
 

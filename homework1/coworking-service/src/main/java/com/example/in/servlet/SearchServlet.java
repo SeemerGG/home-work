@@ -14,7 +14,7 @@ import com.example.in.security.TokenCreator;
 import com.example.in.service.SearchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebServlet("/allPlace")
+@WebServlet("/place/all")
 public class SearchServlet extends HttpServlet{
 
     private final ObjectMapper objectMapper;

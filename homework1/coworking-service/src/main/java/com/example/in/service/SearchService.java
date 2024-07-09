@@ -16,11 +16,9 @@ import com.example.model.Place;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
-import com.example.out.dao.UserDAO;
 
 public class SearchService {
 
-    private final UserDAO userDAO;
     private final PlaceDAO placeDAO;
     private final ReservationDAO reservationDAO;
 
@@ -30,7 +28,6 @@ public class SearchService {
 
 
     public SearchService() {
-        this.userDAO = new UserDAO(DBSingleton.getInstance());
         this.placeDAO = new PlaceDAO(DBSingleton.getInstance());
         this.reservationDAO = new ReservationDAO(DBSingleton.getInstance());
     }
