@@ -3,12 +3,13 @@ package com.example.in.service;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.example.annotation.Loggable;
 import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Place;
 import com.example.model.PlaceType;
 import com.example.out.dao.PlaceDAO;
 
-
+@Loggable
 public class PlaceService {
 
     private final PlaceDAO placeDAO;

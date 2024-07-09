@@ -7,7 +7,6 @@ import com.example.infrastructure.database.DBSingleton;
  * Главный класс приложения, отвечающий за запуск программы.
  */
 public class Main {
-
     /**
      * Основной метод приложения.
      * Создает экземпляр AutentificationController с новым UserDAO, запускает основной цикл приложения.

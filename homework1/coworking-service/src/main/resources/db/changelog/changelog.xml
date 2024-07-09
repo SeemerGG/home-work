@@ -14,4 +14,6 @@
     <include file="insertUsers.xml" relativeToChangelogFile="true"/>
     <include file="insertPlaces.xml" relativeToChangelogFile="true"/>
     <include file="insertReservation.xml" relativeToChangelogFile="true"/>
+    <include file="createUsersActionLogTable.xml" relativeToChangelogFile="true"/>
+    <include file="setConstraintUsersActionLogTable.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

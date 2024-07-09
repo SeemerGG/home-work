@@ -10,13 +10,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.example.dto.SearchDayRepresentation;
+import com.example.annotation.Loggable;
+import com.example.dto.SearchDayRepresentationDTO;
 import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Place;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 
+@Loggable
 public class SearchService {
 
     private final PlaceDAO placeDAO;
@@ -45,7 +47,7 @@ public class SearchService {
      * Фильтрует бронирования по дате и выводит список мест с доступными временными интервалами.
      * @param date Дата, на которую осуществляется поиск.
      */
-    public SearchDayRepresentation searchDay(LocalDate date) throws Exception {
+    public SearchDayRepresentationDTO searchDay(LocalDate date) throws Exception {
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
         Map<Integer, Place> places = placeDAO.getPlaces();
 
@@ -86,7 +88,7 @@ public class SearchService {
             listPlacesWithTime.append(place.toString() + " : \n");
             listPlacesWithTime.append("8 - 22\n");
         }
-        return new SearchDayRepresentation(listPlacesWithTime.toString(), date);
+        return new SearchDayRepresentationDTO(listPlacesWithTime.toString(), date);
     }
 
     /**

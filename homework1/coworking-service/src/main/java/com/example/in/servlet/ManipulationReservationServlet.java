@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 
+import com.example.annotation.Loggable;
+import com.example.annotation.LoggableHttp;
 import com.example.dto.IntervalTimeDTO;
 import com.example.dto.ReservationDTO;
 import com.example.in.security.TokenCreator;
@@ -20,6 +22,8 @@ import com.example.in.service.ReservationService;
 import com.example.model.Reservation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Loggable
+@LoggableHttp
 @WebServlet("/reservation")
 public class ManipulationReservationServlet extends HttpServlet{
 

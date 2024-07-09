@@ -2,6 +2,7 @@ package com.example.in.service;
 
 import java.security.NoSuchAlgorithmException;
 
+import com.example.annotation.Loggable;
 import com.example.in.security.PasswordHashing;
 import com.example.in.security.TokenCreator;
 import com.example.infrastructure.database.DBSingleton;
@@ -11,6 +12,7 @@ import com.example.out.dao.UserDAO;
 /**
  * Класс AutentificationService содержит логику аутентификации пользователя.
  */
+@Loggable
 public class AutentificationService {
 
     private final UserDAO userDAO; 

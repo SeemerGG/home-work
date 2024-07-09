@@ -11,11 +11,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 
+import com.example.annotation.Loggable;
+import com.example.annotation.LoggableHttp;
 import com.example.dto.DateDTO;
 import com.example.in.security.TokenCreator;
 import com.example.in.service.SearchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Loggable
+@LoggableHttp
 @WebServlet("/searchForDay")
 public class SearchDayServlet extends HttpServlet {
     private final ObjectMapper objectMapper;

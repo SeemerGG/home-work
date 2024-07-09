@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.example.annotation.Loggable;
 import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 
+@Loggable
 public class ReservationService {
 
     private final PlaceDAO placeDAO;

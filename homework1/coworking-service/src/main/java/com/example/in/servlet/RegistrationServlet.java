@@ -9,10 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.annotation.Loggable;
+import com.example.annotation.LoggableHttp;
 import com.example.in.service.AutentificationService;
 import com.example.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Loggable
+@LoggableHttp
 @WebServlet("/registr")
 public class RegistrationServlet extends HttpServlet{
 

@@ -102,6 +102,18 @@ public class PlaceDAOTest {
     }
 
     @Test
+    @DisplayName("Проверка существования места по идентификатору")
+    void testExist() {
+        try {
+            int id = 1; 
+            assertTrue(placeDAO.exist(id), "Место с данным идентификатором должно существовать");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+    }
+
+    @Test
     @DisplayName("Удаление места по идентификатору")
     void testDeletePlace() {
         try {
@@ -114,18 +126,6 @@ public class PlaceDAOTest {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    @Test
-    @DisplayName("Проверка существования места по идентификатору")
-    void testExist() {
-        try {
-            int id = 1; 
-            assertTrue(placeDAO.exist(id), "Место с данным идентификатором должно существовать");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
     }
 
     @Test
