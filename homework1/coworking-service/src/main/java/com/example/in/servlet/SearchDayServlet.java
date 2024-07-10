@@ -25,9 +25,9 @@ public class SearchDayServlet extends HttpServlet {
     private final ObjectMapper objectMapper;
     private final SearchService searchService;
 
-    public SearchDayServlet() {
-        this.objectMapper = new ObjectMapper().findAndRegisterModules();
-        this.searchService = new SearchService();
+    public SearchDayServlet(ObjectMapper objectMapper, SearchService searchService) {
+        this.objectMapper = objectMapper;
+        this.searchService = searchService;
     }
 
     @Override

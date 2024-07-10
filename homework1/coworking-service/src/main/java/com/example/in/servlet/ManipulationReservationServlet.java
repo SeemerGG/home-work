@@ -30,9 +30,9 @@ public class ManipulationReservationServlet extends HttpServlet{
     private final ReservationService resService;
     private final ObjectMapper objectMapper;
     
-    public ManipulationReservationServlet() {
-        resService = new ReservationService();
-        objectMapper = new ObjectMapper().findAndRegisterModules();
+    public ManipulationReservationServlet(ObjectMapper objectMapper, ReservationService resService) {
+        this.resService = resService;
+        this.objectMapper = objectMapper;
     }
 
     @Override

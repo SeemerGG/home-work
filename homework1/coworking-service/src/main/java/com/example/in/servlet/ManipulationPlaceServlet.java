@@ -27,9 +27,9 @@ public class ManipulationPlaceServlet extends HttpServlet{
     private final ObjectMapper objectMapper;
     private final PlaceService placeService;
 
-    public ManipulationPlaceServlet() {
-        objectMapper = new ObjectMapper();
-        placeService = new PlaceService();
+    public ManipulationPlaceServlet(ObjectMapper objectMapper, PlaceService placeService) {
+        this.objectMapper = objectMapper;
+        this.placeService = placeService;
     }
 
     @Override

@@ -27,9 +27,12 @@ public class LogHttpAspect {
 
     @AfterReturning("annotatedByLoggableHttp() && args(req, resp)")
     public void logHttpRequest(JoinPoint joinPoint, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String jwtToken = req.getHeader("Authorization").replace("Bearer ", "");
-        String login = TokenCreator.getUserLogin(jwtToken);
-        String uri = req.getRequestURI();
-        dao.add(login, LocalDateTime.now(), uri);
+        String jwtToken = req.getHeader("Authorization");
+        if(jwtToken != null) { 
+            jwtToken = jwtToken.replace("Bearer ", "");
+            String login = TokenCreator.getUserLogin(jwtToken);
+            String uri = req.getRequestURI();
+            dao.add(login, LocalDateTime.now(), uri);
+        }
     }
 }

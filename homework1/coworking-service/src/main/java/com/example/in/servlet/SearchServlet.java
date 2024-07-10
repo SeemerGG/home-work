@@ -27,9 +27,9 @@ public class SearchServlet extends HttpServlet{
     /**
      * Конструктор класса.
      */
-    public SearchServlet() {
-        this.objectMapper = new ObjectMapper().findAndRegisterModules();
-        this.searchService = new SearchService();
+    public SearchServlet(ObjectMapper objectMapper, SearchService searchService) {
+        this.objectMapper = objectMapper;
+        this.searchService = searchService;
     }
     
     @Override

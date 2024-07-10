@@ -23,9 +23,9 @@ public class AutentificationServlet extends HttpServlet {
     private final ObjectMapper objectMapper;
     private final AutentificationService autentificationService;
 
-    public AutentificationServlet() {
-        this.objectMapper = new ObjectMapper();
-        this.autentificationService = new AutentificationService();
+    public AutentificationServlet(ObjectMapper objectMapper, AutentificationService authService) {
+        this.objectMapper = objectMapper;
+        this.autentificationService = authService;
     }
 
     @Override
