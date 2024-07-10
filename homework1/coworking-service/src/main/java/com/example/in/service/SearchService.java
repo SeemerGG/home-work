@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import com.example.annotation.Loggable;
 import com.example.dto.SearchDayRepresentationDTO;
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Place;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
@@ -29,9 +28,9 @@ public class SearchService {
     private LocalTime closeTime = LocalTime.of(22, 0);
 
 
-    public SearchService() {
-        this.placeDAO = new PlaceDAO(DBSingleton.getInstance());
-        this.reservationDAO = new ReservationDAO(DBSingleton.getInstance());
+    public SearchService(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
+        this.placeDAO = placeDAO;
+        this.reservationDAO = reservationDAO;
     }
 
     /**

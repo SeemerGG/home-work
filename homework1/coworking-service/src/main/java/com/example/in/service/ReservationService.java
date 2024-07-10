@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.example.annotation.Loggable;
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.Reservation;
 import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
@@ -20,9 +19,9 @@ public class ReservationService {
     private final ReservationDAO reservationDAO;
 
 
-    public ReservationService() {
-        this.placeDAO = new PlaceDAO(DBSingleton.getInstance());
-        this.reservationDAO = new ReservationDAO(DBSingleton.getInstance());
+    public ReservationService(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
+        this.placeDAO = placeDAO;
+        this.reservationDAO = reservationDAO;
     }
 
     /**

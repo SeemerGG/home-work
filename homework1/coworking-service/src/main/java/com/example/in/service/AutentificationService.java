@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import com.example.annotation.Loggable;
 import com.example.in.security.PasswordHashing;
 import com.example.in.security.TokenCreator;
-import com.example.infrastructure.database.DBSingleton;
 import com.example.model.User;
 import com.example.out.dao.UserDAO;
 
@@ -20,8 +19,8 @@ public class AutentificationService {
     /**
      * Конструктор класса.
      */
-    public AutentificationService() {
-        this.userDAO = new UserDAO(DBSingleton.getInstance());
+    public AutentificationService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     /**
