@@ -64,6 +64,9 @@ public final class PlaceDAO {
      * @return Список мест.
      */
     private Map<Integer, Place> resultForMap(ResultSet resultSet) throws SQLException{
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         Map<Integer, Place> places = new HashMap<>();
         while(resultSet.next()) {
             Place place = mappingResultSetToPlace(resultSet);
@@ -81,8 +84,7 @@ public final class PlaceDAO {
         String request = "SELECT * FROM \"place\" WHERE place_type='?'";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setString(1, placeType.name());
-        ResultSet resultSet = statement.executeQuery();
-        return resultForMap(resultSet);
+        return resultForMap(statement.executeQuery());
     }
 
     /**
@@ -96,6 +98,9 @@ public final class PlaceDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         if(resultSet.next()) {
             place = mappingResultSetToPlace(resultSet);
         }
@@ -123,12 +128,7 @@ public final class PlaceDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
-        if(resultSet.next()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return resultSet.getBoolean("exists");
     }
 
     /**

@@ -6,12 +6,14 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     <!--<include file="createWorkSchema.xml" relativeToChangelogFile="true"/>-->
-    <include file="createUserTable.xml" relativeToChangelogFile="true"/>
-    <include file="createPlaceTable.xml" relativeToChangelogFile="true"/>
-    <include file="changesetPlace.xml" relativeToChangelogFile="true"/>
-    <include file="createReservationTable.xml" relativeToChangelogFile="true"/>
-    <include file="changesetReservation.xml" relativeToChangelogFile="true"/>
-    <include file="insertUsers.xml" relativeToChangelogFile="true"/>
-    <include file="insertPlaces.xml" relativeToChangelogFile="true"/>
-    <include file="insertReservation.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-createUserTable.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-createPlaceTable.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-changesetPlace.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-createReservationTable.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-changesetReservation.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-insertUsers.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-insertPlaces.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-insertReservation.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-createUsersActionLogTable.xml" relativeToChangelogFile="true"/>
+    <include file="v0001-setConstraintUsersActionLogTable.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

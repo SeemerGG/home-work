@@ -14,5 +14,6 @@
             <column name="login" value="user0002"/>
             <column name="password" value="ae9a6aa038a92a456dc27a69746da4ec4f4fc490d411711c0f6c5ec01ba21656"/>
         </insert>
+        
    </changeSet>
 </databaseChangeLog>

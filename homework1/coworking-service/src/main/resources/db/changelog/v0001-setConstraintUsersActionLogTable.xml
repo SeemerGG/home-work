@@ -5,16 +5,12 @@
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    <changeSet id="addForeignKeyReservation" author="Seemer" >
-        <addForeignKeyConstraint baseColumnNames="place_id" 
-            baseTableName="reservation"
-            constraintName="fkPlaceReservationId"
-            referencedColumnNames="place_id"
-            referencedTableName="place"/>
-        <addForeignKeyConstraint baseColumnNames="client_login"
-            baseTableName="reservation"
-            constraintName="fkReservationUser"
+    <changeSet id="addForeignKeyUsersActionLog" author="Seemer" >
+        <addForeignKeyConstraint baseColumnNames="client_login" 
+            baseTableName="users_action_log"
+            constraintName="fkUserLogin"
             referencedColumnNames="login"
-            referencedTableName="user"/>
+            referencedTableName="user"
+            onDelete="NO ACTION"/>
     </changeSet>
 </databaseChangeLog>

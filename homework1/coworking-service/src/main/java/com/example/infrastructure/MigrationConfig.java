@@ -18,6 +18,7 @@ public class MigrationConfig {
      */
     @SuppressWarnings("deprecation")
     static public void performingMigration (Connection connection) {
+
         String liqubaseSchema = ConfigurationProperties.properties.getProperty("liquibase.currentSchema");
         String defaultSchema = ConfigurationProperties.properties.getProperty("liquibase.defaultSchema");
         String changeLogPath = ConfigurationProperties.properties.getProperty("liquibase.changeLogPath");
@@ -34,9 +35,15 @@ public class MigrationConfig {
         }
     }
 
+    /**
+     * Метод закрывающий миграцию.
+     */
     static public void closeMigration() {
+
         try {
-            liquibase.close();
+            if(liquibase != null) {
+                liquibase.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

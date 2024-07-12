@@ -44,6 +44,9 @@ public final class ReservationDAO {
     }
 
     private Map<Integer, Reservation> resultForMap(ResultSet resultSet) throws SQLException {
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         Map<Integer, Reservation> reservations = new HashMap<>();
         while(resultSet.next()) {
             Reservation reservation = mappingResultSetToReservation(resultSet);
@@ -64,6 +67,9 @@ public final class ReservationDAO {
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
+        if(!resultSet.isBeforeFirst()) {
+            return null;
+        }
         if(resultSet.next()) {
             reservation = mappingResultSetToReservation(resultSet);
         }
@@ -99,7 +105,7 @@ public final class ReservationDAO {
         String request = "DELETE FROM \"reservation\" WHERE place_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, placeId);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -114,7 +120,7 @@ public final class ReservationDAO {
         statement.setTime(1, Time.valueOf(startTime));
         statement.setTime(2, Time.valueOf(endTime));
         statement.setInt(3, id);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -125,7 +131,7 @@ public final class ReservationDAO {
         String request = "DELETE FROM \"reservation\" WHERE reservation_id=?";
         PreparedStatement statement = connection.prepareStatement(request);
         statement.setInt(1, id);
-        statement.executeQuery();
+        statement.executeUpdate();
     }
 
     /**
@@ -199,6 +205,25 @@ public final class ReservationDAO {
         return resultForMap(statement.executeQuery()).values();
     }
 
+    /**
+     * Метод получения записей с определенным местом и датой.
+     * @param idPlace Идентификатор места.
+     * @param date Дата на которую произведена запись.
+     * @return Список записей указанного пользователя.
+     */
+    public Collection<Reservation> getReservationsForDateAndPlace(int idPlace, LocalDate date) throws SQLException { 
+        String request = "SELECT * FROM \"reservation\" WHERE place_id=? AND date=?";
+        PreparedStatement statement = connection.prepareStatement(request);
+        statement.setInt(1, idPlace);
+        statement.setDate(2, Date.valueOf(date));
+        return resultForMap(statement.executeQuery()).values();
+    }
+    /**
+     * Вспомогательный метод мапинга объекта ResultSet.
+     * @param resultSet
+     * @return
+     * @throws SQLException
+     */
     private Reservation mappingResultSetToReservation(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("reservation_id");
         int placeId = resultSet.getInt("place_id");

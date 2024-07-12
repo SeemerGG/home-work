@@ -45,104 +45,81 @@ public class PlaceDAOTest {
     }
 
     @BeforeAll 
-    static void runConfiguration() {
-        try {
-            Startables.deepStart(Stream.of(container)).join();
-            connection = container.createConnection("");
-            MigrationConfig.performingMigration(connection);
-            placeDAO = new PlaceDAO(connection);
-        } catch (Exception e) {
-            System.out.print(e.getMessage());
-        }
+    static void runConfiguration() throws Exception{
+        
+        Startables.deepStart(Stream.of(container)).join();
+        connection = container.createConnection("");
+        MigrationConfig.performingMigration(connection);
+        placeDAO = new PlaceDAO(connection);
     }
     
 
     @Test
     @DisplayName("Добавление нового рабочего места")
-    void testAddPlace() {
-        try {
-            String loginOwner = "user0002";
-            placeDAO.add(loginOwner, 1, PlaceType.WORKPLACE);
-            Map<Integer, Place> places = placeDAO.getPlaces();
-            assertTrue(places.values().stream().anyMatch(place -> place.getLoginOwner().equals(loginOwner)),
-                    "Новое рабочее место должно быть добавлено");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
+    void testAddPlace() throws Exception {
+
+        String loginOwner = "user0002";
+        placeDAO.add(loginOwner, 1, PlaceType.WORKPLACE);
+        Map<Integer, Place> places = placeDAO.getPlaces();
+        assertTrue(places.values().stream().anyMatch(place -> place.getLoginOwner().equals(loginOwner)),
+                "Новое рабочее место должно быть добавлено");
     }
 
     @Test
     @DisplayName("Добавление нового конференц-зала")
-    void testAddConferenceRoom() {
-        try {
+    void testAddConferenceRoom() throws Exception{
+
             String loginOwner = "user0003";
             int seats = 50;
             placeDAO.add(loginOwner, seats, PlaceType.CONFERENCEROOM);
             Map<Integer, Place> places = placeDAO.getForPlaceType(PlaceType.CONFERENCEROOM);
             assertTrue(places.values().stream().anyMatch(place -> place.getLoginOwner().equals(loginOwner) && place.getSeats() == seats),
                     "Новый конференц-зал должен быть добавлен");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
     }
 
     @Test
     @DisplayName("Получение места по идентификатору")
-    void testGetPlace() {
-        try {
-            int id = 1; 
-            Place place = placeDAO.getPlace(id);
-            assertNotNull(place, "Место с данным идентификатором должно существовать");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
-    }
+    void testGetPlace() throws Exception{
 
-    @Test
-    @DisplayName("Удаление места по идентификатору")
-    void testDeletePlace() {
-        try {
-            int id = 1; 
-            assertTrue(placeDAO.exist(id), "Место до удаления должно существовать");
-            placeDAO.deletePlace(id);
-            assertFalse(placeDAO.exist(id), "Место после удаления не должно существовать");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        int id = 1; 
+        Place place = placeDAO.getPlace(id);
+        assertNotNull(place, "Место с данным идентификатором должно существовать"); 
     }
 
     @Test
     @DisplayName("Проверка существования места по идентификатору")
-    void testExist() {
-        try {
-            int id = 1; 
-            assertTrue(placeDAO.exist(id), "Место с данным идентификатором должно существовать");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
+    void testExist() throws Exception{
+
+        int id = 1; 
+        assertTrue(placeDAO.exist(id), "Место с данным идентификатором должно существовать");
+    }
+
+    @Test
+    @DisplayName("Удаление места по идентификатору")
+    void testDeletePlace() throws Exception{
+
+        int id = 1; 
+        assertTrue(placeDAO.exist(id), "Место до удаления должно существовать");
+        placeDAO.deletePlace(id);
+        System.out.println(placeDAO.getPlaces());
+        System.out.println(placeDAO.exist(id));
+        assertFalse(placeDAO.exist(id), "Место после удаления не должно существовать");
     }
 
     @Test
     @DisplayName("Получение списка мест одного владельца")
-    void testGetPlacesOneOwner() {
-        try {
-            String loginOwner = "user0001";
-            Map<Integer, Place> places = placeDAO.getPlacesOneOwner(loginOwner);
-            assertFalse(places.isEmpty(), "Список мест одного владельца не должен быть пустым");
-            assertTrue(places.values().stream().allMatch(place -> place.getLoginOwner().equals(loginOwner)),
-                    "Все места в списке должны принадлежать одному владельцу");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
+    void testGetPlacesOneOwner() throws Exception {
+
+        String loginOwner = "user0001";
+        Map<Integer, Place> places = placeDAO.getPlacesOneOwner(loginOwner);
+        assertFalse(places.isEmpty(), "Список мест одного владельца не должен быть пустым");
+        assertTrue(places.values().stream().allMatch(place -> place.getLoginOwner().equals(loginOwner)),
+                "Все места в списке должны принадлежать одному владельцу");
     }
 
     @AfterAll
     static void down() {
+        
         MigrationConfig.closeMigration();
         container.stop();
     } 
