@@ -11,6 +11,7 @@ public class ConfigurationProperties {
     public static Properties properties;
 
     static {
+        
         properties = new Properties();
         try (InputStream input = ConfigurationProperties.class.getClassLoader().getResourceAsStream("application.properties")){
             properties.load(input);

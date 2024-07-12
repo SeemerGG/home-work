@@ -14,7 +14,9 @@ import com.example.out.dao.ReservationDAO;
 import com.example.out.dao.UserDAO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+/**
+ * Класс инициализиурющий сервлеты.
+ */
 public class AppContextListener implements ServletContextListener{
 
     private ObjectMapper objectMapper;
@@ -25,6 +27,7 @@ public class AppContextListener implements ServletContextListener{
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        
         PlaceDAO placeDAO = new PlaceDAO(DBSingleton.getInstance());
         ReservationDAO reservationDAO = new ReservationDAO(DBSingleton.getInstance());
         UserDAO userDAO = new UserDAO(DBSingleton.getInstance());

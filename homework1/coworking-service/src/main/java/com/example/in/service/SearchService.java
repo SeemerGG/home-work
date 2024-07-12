@@ -18,6 +18,9 @@ import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 
 @Loggable
+/**
+ * Класс реализующий логику поиска.
+ */
 public class SearchService {
 
     private final PlaceDAO placeDAO;
@@ -29,6 +32,7 @@ public class SearchService {
 
 
     public SearchService(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
+
         this.placeDAO = placeDAO;
         this.reservationDAO = reservationDAO;
     }
@@ -37,7 +41,8 @@ public class SearchService {
      * Метод поиска всех мест.
      * Получает список всех рабочих мест и конференц-залов без учета их занятости и выводит его в представление.
      */
-    public Collection<Place> search() throws SQLException{
+    public Collection<Place> search() throws SQLException {
+
         return placeDAO.getPlaces().values();
     }
 
@@ -47,6 +52,7 @@ public class SearchService {
      * @param date Дата, на которую осуществляется поиск.
      */
     public SearchDayRepresentationDTO searchDay(LocalDate date) throws Exception {
+
         StringBuilder listPlacesWithTime = new StringBuilder("ID) *Остальная информация*\n");
         Map<Integer, Place> places = placeDAO.getPlaces();
 
@@ -96,6 +102,7 @@ public class SearchService {
      * @return Список интервалов времени.
      */
     private List<LocalTime> generatingAllTimeInterval() {
+        
         return IntStream.range(openTime.toSecondOfDay(), closeTime.toSecondOfDay())
                     .filter(i -> i % 3600 == 0)
                     .mapToObj(i -> LocalTime.ofSecondOfDay(i))

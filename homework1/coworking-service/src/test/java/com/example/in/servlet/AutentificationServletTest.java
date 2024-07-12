@@ -1,5 +1,6 @@
 package com.example.in.servlet;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.BufferedReader;
@@ -9,37 +10,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.in.service.AutentificationService;
 import com.example.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@ExtendWith(MockitoExtension.class)
 public class AutentificationServletTest {
-
-    private AutentificationServlet servlet;
-
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    private HttpServletResponse response;
 
     @Mock
     private AutentificationService autentificationService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private AutentificationServlet servlet;
+
+    
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         servlet = new AutentificationServlet(objectMapper, autentificationService);
     }
 
     @Test
-    public void testDoPostSuccess() throws Exception {
+    @DisplayName("Проверка успешной авторизации.")
+    public void testDoPostSuccess(@Mock HttpServletRequest request, @Mock HttpServletResponse response) throws Exception {
+
         User user = new User("user0001", "user0001");
         String userJson = objectMapper.writeValueAsString(user);
         String token = "someToken";
@@ -54,7 +55,9 @@ public class AutentificationServletTest {
     }
 
     @Test
-    public void testDoPostFailure() throws Exception {
+    @DisplayName("Проверка неудачной попытки авторизации.")
+    public void testDoPostFailure(@Mock HttpServletRequest request, @Mock HttpServletResponse response) throws Exception {
+        
         User user = new User("user0001", "user0001");
         String userJson = objectMapper.writeValueAsString(user);
         Exception exception = new Exception("Authentication failed");

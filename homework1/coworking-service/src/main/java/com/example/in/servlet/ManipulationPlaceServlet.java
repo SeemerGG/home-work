@@ -22,18 +22,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Loggable
 @LoggableHttp
 @WebServlet("/places")
+/**
+ * Класс отвечающий за обработку запросов связаных с местом.
+ */
 public class ManipulationPlaceServlet extends HttpServlet{
 
     private final ObjectMapper objectMapper;
     private final PlaceService placeService;
 
     public ManipulationPlaceServlet(ObjectMapper objectMapper, PlaceService placeService) {
+
         this.objectMapper = objectMapper;
         this.placeService = placeService;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String jwtToken = req.getHeader("Authorization").replace("Bearer ", "");
         try {
             if(TokenCreator.verifyToken(jwtToken)) {
@@ -53,6 +58,7 @@ public class ManipulationPlaceServlet extends HttpServlet{
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         try {
             String token = req.getHeader("Authorization").replace("Bearer ", "");
             if(TokenCreator.verifyToken(token)) {  
@@ -68,6 +74,7 @@ public class ManipulationPlaceServlet extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
         try {
             String token = req.getHeader("Authorization").replace("Bearer ", "");
             if(TokenCreator.verifyToken(token)) {  

@@ -6,9 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class UserTest {
+    
     @Test
     @DisplayName("Проверка соответствия логина.")
     void testGetLogin() {
+
         String login = "userLogin";
         String password = "userPassword";
         User user = new User(login, password);
@@ -18,6 +20,7 @@ public class UserTest {
     @Test
     @DisplayName("Проверка соответствия пароля.")
     void testGetPassword() {
+
         String login = "userLogin";
         String password = "userPassword";
         User user = new User(login, password);

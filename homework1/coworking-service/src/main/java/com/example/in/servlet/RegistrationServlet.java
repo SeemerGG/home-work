@@ -18,18 +18,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Loggable
 @LoggableHttp
 @WebServlet("/registr")
-public class RegistrationServlet extends HttpServlet{
+/**
+ * Класс отвечающий за обработку запросов на регистрацию.
+ */
+public class RegistrationServlet extends HttpServlet {
 
     private final ObjectMapper objectMapper;
     private final AutentificationService autentificationService;
 
     public RegistrationServlet(ObjectMapper objectMapper, AutentificationService authService) {
+
         this.objectMapper = objectMapper;
         this.autentificationService = authService;
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
         StringBuilder jsonString = new StringBuilder();
         String line;
         BufferedReader reader = req.getReader();

@@ -13,6 +13,9 @@ import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 
 @Loggable
+/**
+ * Класс реализующий логику взаимодействия с бронированиями.
+ */
 public class ReservationService {
 
     private final PlaceDAO placeDAO;
@@ -20,6 +23,7 @@ public class ReservationService {
 
 
     public ReservationService(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
+
         this.placeDAO = placeDAO;
         this.reservationDAO = reservationDAO;
     }
@@ -33,7 +37,8 @@ public class ReservationService {
      * @param date День начала бронирования.
      * @param currUserLogin Логин пользователя готового совершить бронирование.
      */
-    public boolean reservating(Integer idPlace, LocalTime starTime, LocalTime endTime, LocalDate date, String currUserLogin) throws Exception{
+    public boolean reservating(Integer idPlace, LocalTime starTime, LocalTime endTime, LocalDate date, String currUserLogin) throws Exception {
+
         List<Reservation> reservationByPlace = new ArrayList<>(reservationDAO.getReservationsForDateAndPlace(idPlace, date)); 
         if(!reservationByPlace.isEmpty()) {
             for(Reservation reserv : reservationByPlace) {
@@ -62,7 +67,8 @@ public class ReservationService {
      * Удаляет бронирование из системы и обновляет представление.
      * @param id Идентификатор бронирования для удаления.
      */
-    public void deleteReservaton(int id, String login) throws Exception{
+    public void deleteReservaton(int id, String login) throws Exception {
+
         if(reservationDAO.getReservation(id).getClientLogin().equals(login)) {
             reservationDAO.delete(id);
         }
@@ -78,7 +84,8 @@ public class ReservationService {
      * @param startTime Новое время начала бронирования.
      * @param endTime Новое время окончания бронирования.
      */
-    public void updateTime(int id, LocalTime startTime, LocalTime endTime, String login) throws Exception{
+    public void updateTime(int id, LocalTime startTime, LocalTime endTime, String login) throws Exception {
+
         Reservation reservation = reservationDAO.getReservation(id);
         if(!reservation.getClientLogin().equals(login)) {
             throw new Exception("Не достаточно прав.");
@@ -102,6 +109,7 @@ public class ReservationService {
      * @param param Тип места для фильтрации ('conference' или 'work').
      */
     public Collection<Reservation> filterForType(String login) throws SQLException {
+
         return reservationDAO.getOrderedReservationByType(login);
     }
 
@@ -109,7 +117,8 @@ public class ReservationService {
      * Фильтрует бронирования по дате.
      * Сортирует и передает представлению список бронирований пользователя отсортированных по дате.
      */
-    public Collection<Reservation> filterForDate(String login) throws SQLException{
+    public Collection<Reservation> filterForDate(String login) throws SQLException {
+
         return reservationDAO.getOrderedReservationByDay(login);
     }
 
@@ -117,7 +126,8 @@ public class ReservationService {
      * Фильтрует бронирования по владельцу места.
      * Сортирует и передает представлению список бронирований пользователя по владельцу места.
      */
-    public Collection<Reservation> filterForOwner(String login) throws SQLException{
+    public Collection<Reservation> filterForOwner(String login) throws SQLException {
+        
         return reservationDAO.getOrderedReservationByOwner(login);
     }
 }

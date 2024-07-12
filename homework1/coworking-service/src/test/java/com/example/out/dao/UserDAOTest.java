@@ -39,41 +39,34 @@ public class UserDAOTest {
     }
 
     @BeforeAll 
-    static void runConfiguration() {
-        try {
-            Startables.deepStart(Stream.of(container)).join();
-            connection = container.createConnection("");
-            MigrationConfig.performingMigration(connection);
-            userDAO = new UserDAO(connection);
-        } catch (Exception e) {
-            System.out.print(e.getMessage());
-        }
+    static void runConfiguration() throws Exception {
+
+        Startables.deepStart(Stream.of(container)).join();
+        connection = container.createConnection("");
+        MigrationConfig.performingMigration(connection);
+        userDAO = new UserDAO(connection);
     } 
 
     @Test
     @DisplayName("Проверка добавления пользователя.")
-    void testAddUser() {
-        try {
-            userDAO.addUser("user0003", PasswordHashing.getPasswordHash("user0003"));
-            assertNotNull(userDAO.getUser("user0003"));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testAddUser() throws Exception {
+
+        userDAO.addUser("user0003", PasswordHashing.getPasswordHash("user0003"));
+        assertNotNull(userDAO.getUser("user0003"));
     }
 
     @Test
     @DisplayName("Проверка метода получения пользователя по его логину.")
-    void testGetUser() {
-        try {
-            User user = userDAO.getUser("user0003");
-            assertNotNull(user, "Пользователь с логином user0003 должен существовать");
-            assertEquals("user0003", user.getLogin(), "Логин пользователя должен соответствовать запрошенному");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testGetUser() throws Exception {
+
+        User user = userDAO.getUser("user0003");
+        assertNotNull(user, "Пользователь с логином user0003 должен существовать");
+        assertEquals("user0003", user.getLogin(), "Логин пользователя должен соответствовать запрошенному");
     }
+
     @AfterAll
     static void down() {
+        
         MigrationConfig.closeMigration();
         container.stop();
     } 

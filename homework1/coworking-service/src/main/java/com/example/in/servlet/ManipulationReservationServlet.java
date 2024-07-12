@@ -25,18 +25,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Loggable
 @LoggableHttp
 @WebServlet("/reservation")
+/**
+ * Класс отвечающий за обработку запросов связанных с бронированием.
+ */
 public class ManipulationReservationServlet extends HttpServlet{
 
     private final ReservationService resService;
     private final ObjectMapper objectMapper;
     
     public ManipulationReservationServlet(ObjectMapper objectMapper, ReservationService resService) {
+
         this.resService = resService;
         this.objectMapper = objectMapper;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         try {
             String token = req.getHeader("Authorization").replace("Bearer ", "");
             if(TokenCreator.verifyToken(token)) {  
@@ -65,6 +70,7 @@ public class ManipulationReservationServlet extends HttpServlet{
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         try {
             String token = req.getHeader("Authorization").replace("Bearer ", "");
             if(TokenCreator.verifyToken(token)) {  
@@ -80,6 +86,7 @@ public class ManipulationReservationServlet extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String jwtToken = req.getHeader("Authorization").replace("Bearer ", "");
         try {
             if(TokenCreator.verifyToken(jwtToken)) {
@@ -108,6 +115,7 @@ public class ManipulationReservationServlet extends HttpServlet{
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         try {
             String token = req.getHeader("Authorization").replace("Bearer ", "");
             if(TokenCreator.verifyToken(token)) {  
@@ -128,8 +136,4 @@ public class ManipulationReservationServlet extends HttpServlet{
         }
         super.doPut(req, resp);
     }
-
-    
-
-    
 }

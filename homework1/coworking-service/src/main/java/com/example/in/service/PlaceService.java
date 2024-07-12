@@ -9,18 +9,23 @@ import com.example.model.PlaceType;
 import com.example.out.dao.PlaceDAO;
 
 @Loggable
+/**
+ * Класс реализующий логику взаимодействия с местами.
+ */
 public class PlaceService {
 
     private final PlaceDAO placeDAO;
     
     public PlaceService(PlaceDAO placeDAO) {
+
         this.placeDAO = placeDAO;
     }
 
     /**
      * Метод ищет все места зарегистрированные на логин текущего пользователя и передает их представлению для вывода.
      */
-    public Collection<Place> myPublication(String login) throws SQLException{
+    public Collection<Place> myPublication(String login) throws SQLException {
+
         return placeDAO.getPlacesOneOwner(login).values();
     }
 
@@ -28,7 +33,8 @@ public class PlaceService {
      * Метод удаляет место с указанным id, а также все записи с указаным местом.
      * @param id Идентификационный номер места, которое надо удалить.
      */
-    public void deleteMyPlace(int id, String login) throws Exception{
+    public void deleteMyPlace(int id, String login) throws Exception {
+
         if(!placeDAO.getPlace(id).getLoginOwner().equals(login)) {
             throw new Exception("Недостаточно прав.");
         }
@@ -40,7 +46,8 @@ public class PlaceService {
      * Добавляет конференц-зал с указанным количеством мест в систему и обновляет представление.
      * @param seats Количество мест в новом конференц-зале.
      */
-    public void createMyPlace(int seats, PlaceType placeType, String login) throws SQLException{
+    public void createMyPlace(int seats, PlaceType placeType, String login) throws SQLException {
+
         placeDAO.add(login, seats, placeType);
     }
 

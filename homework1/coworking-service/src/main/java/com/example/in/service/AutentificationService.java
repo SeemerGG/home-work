@@ -20,6 +20,7 @@ public class AutentificationService {
      * Конструктор класса.
      */
     public AutentificationService(UserDAO userDAO) {
+
         this.userDAO = userDAO;
     }
 
@@ -29,6 +30,7 @@ public class AutentificationService {
      * @throws Exception 
      */
     public String authorization(User user) throws Exception {
+
         User realUser = userDAO.getUser(user.getLogin());
         if(realUser != null) {
             if(PasswordHashing.compareHashAndString(realUser.getPassword(), user.getPassword())) {
@@ -49,6 +51,7 @@ public class AutentificationService {
      * @throws NoSuchAlgorithmException Если алгоритм хеширования не поддерживается.
      */
     public String registration(User user) throws Exception {
+        
         String hashPassword = PasswordHashing.getPasswordHash(user.getPassword());
         if(userDAO.getUser(user.getLogin()) != null) {
             throw new Exception("Пользователь с указанным логином уже существует.");

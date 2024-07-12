@@ -46,84 +46,66 @@ public class ReservationDAOTest {
     private static Connection connection;
 
     @BeforeAll 
-    static void runConfiguration() {
-        try {
-            Startables.deepStart(Stream.of(container)).join();
-            connection = container.createConnection("");
-            MigrationConfig.performingMigration(connection);
-            reservationDAO = new ReservationDAO(connection);
-        } catch (Exception e) {
-            System.out.print(e.getMessage());
-        }
+    static void runConfiguration() throws Exception {
+
+        Startables.deepStart(Stream.of(container)).join();
+        connection = container.createConnection("");
+        MigrationConfig.performingMigration(connection);
+        reservationDAO = new ReservationDAO(connection);
     }
 
     @Test
     @DisplayName("Добавление нового бронирования и получение его по ID")
-    void testAddAndGetReservation() {
-        try {
-            reservationDAO.addReservation(placeId, "newUser", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(15, 0));
-            Reservation newReservation = reservationDAO.getReservation(1);
-            assertNotNull(newReservation, "Бронирование должно быть добавлено и получено");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testAddAndGetReservation() throws Exception {
+
+        reservationDAO.addReservation(placeId, "newUser", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(15, 0));
+        Reservation newReservation = reservationDAO.getReservation(1);
+        assertNotNull(newReservation, "Бронирование должно быть добавлено и получено");
     }
 
     @Test
     @DisplayName("Удаление бронирования по ID")
-    void testDeleteReservation() {
-        try {
-            reservationDAO.delete(1);
-            assertNull(reservationDAO.getReservation(1), "Бронирование должно быть удалено"); 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testDeleteReservation() throws Exception {
+
+        reservationDAO.delete(1);
+        assertNull(reservationDAO.getReservation(1), "Бронирование должно быть удалено"); 
     }
 
     @Test
     @DisplayName("Обновление времени бронирования")
-    void testUpdateTime() {
-        try {
-            reservationDAO.addReservation(placeId, "newUser", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(15, 0));
-            LocalTime newStartTime = LocalTime.of(10, 0);
-            LocalTime newEndTime = LocalTime.of(16, 0);
-            reservationDAO.updateTime(1, newStartTime, newEndTime);
-            Reservation updatedReservation = reservationDAO.getReservation(1);
-            assertEquals(newStartTime, updatedReservation.getStartTime(), "Время начала должно быть обновлено");
-            assertEquals(newEndTime, updatedReservation.getEndTime(), "Время окончания должно быть обновлено");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testUpdateTime() throws Exception {
+
+        reservationDAO.addReservation(placeId, "newUser", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(15, 0));
+        LocalTime newStartTime = LocalTime.of(10, 0);
+        LocalTime newEndTime = LocalTime.of(16, 0);
+        reservationDAO.updateTime(1, newStartTime, newEndTime);
+        Reservation updatedReservation = reservationDAO.getReservation(1);
+        assertEquals(newStartTime, updatedReservation.getStartTime(), "Время начала должно быть обновлено");
+        assertEquals(newEndTime, updatedReservation.getEndTime(), "Время окончания должно быть обновлено");
     }
 
     @Test
     @DisplayName("Получение всех бронирований")
-    void testGetReservations() {
-        try {
-            assertFalse(reservationDAO.getReservations().isEmpty(), "Список бронирований не должен быть пустым");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testGetReservations() throws Exception {
+
+        assertFalse(reservationDAO.getReservations().isEmpty(), "Список бронирований не должен быть пустым");
     }
 
     @Test
     @DisplayName("Удаление бронирований для определенного места")
-    void testDeleteElementForPlaceId() {
-        try {
-            reservationDAO.addReservation(placeId, "anotherUser", LocalDate.now(), LocalTime.of(11, 0), LocalTime.of(14, 0));
-            reservationDAO.deleteElementForPlaceId(placeId);
-            List<Reservation> reservations = reservationDAO.getReservations().values().stream()
-                .filter(res -> res.getPlaceId() == placeId)
-                .collect(Collectors.toList());
-            assertTrue(reservations.isEmpty(), "Бронирования для места должны быть удалены");
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    void testDeleteElementForPlaceId() throws Exception {
+
+        reservationDAO.addReservation(placeId, "anotherUser", LocalDate.now(), LocalTime.of(11, 0), LocalTime.of(14, 0));
+        reservationDAO.deleteElementForPlaceId(placeId);
+        List<Reservation> reservations = reservationDAO.getReservations().values().stream()
+            .filter(res -> res.getPlaceId() == placeId)
+            .collect(Collectors.toList());
+        assertTrue(reservations.isEmpty(), "Бронирования для места должны быть удалены");
     }
 
     @AfterAll
     static void down() {
+        
         MigrationConfig.closeMigration();
         container.stop();
     } 
