@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.model.Place;
-import com.example.model.PlaceType;
+import com.example.domain.model.Place;
+import com.example.domain.model.PlaceType;
 
 /**
  * DAO класс для управления местами.
@@ -148,7 +148,7 @@ public final class PlaceDAO {
         String placeType = resultSet.getString("place_type");
         String loginOwner = resultSet.getString("login_owner");
         int seats = resultSet.getInt("seats");
-        return new Place(id, loginOwner, placeType, seats);
+        return new Place(id, loginOwner, PlaceType.valueOf(placeType), seats);
     }
 
 }

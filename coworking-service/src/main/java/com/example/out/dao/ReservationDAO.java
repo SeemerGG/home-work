@@ -11,11 +11,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.domain.model.Reservation;
 
 import java.sql.Date;
 import java.sql.Time;
-
-import com.example.model.Reservation;
 
 /**
  * Класс для доступа к данным о бронированиях.

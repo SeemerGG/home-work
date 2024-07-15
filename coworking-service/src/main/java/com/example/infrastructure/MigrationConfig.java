@@ -2,6 +2,9 @@ package com.example.infrastructure;
 
 import java.sql.Connection;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -13,15 +16,18 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 public class MigrationConfig {
 
     private static Liquibase liquibase; 
+
+    @Autowired
+    private static Properties properties;
     /**
      * Статический метод выполнения миграции на основе значений конфигурационных свойств. 
      */
     @SuppressWarnings("deprecation")
     static public void performingMigration (Connection connection) {
 
-        String liqubaseSchema = ConfigurationProperties.properties.getProperty("liquibase.currentSchema");
-        String defaultSchema = ConfigurationProperties.properties.getProperty("liquibase.defaultSchema");
-        String changeLogPath = ConfigurationProperties.properties.getProperty("liquibase.changeLogPath");
+        String liqubaseSchema = properties.getProperty("liquibaseSchema");
+        String defaultSchema = properties.getProperty("defaultSchema");
+        String changeLogPath = properties.getProperty("changeLogPath");
         try {
             Database database = 
                 DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
