@@ -5,6 +5,7 @@ db:
   host: jdbc:postgresql://localhost:5432/admin
   user: admin
   password: admin321
+  driver: org.postgresql.Driver
 
 liquibase:
   defaultSchema: public

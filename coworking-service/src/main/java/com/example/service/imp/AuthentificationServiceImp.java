@@ -1,5 +1,8 @@
 package com.example.service.imp;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.annotation.Loggable;
 import com.example.domain.model.User;
 import com.example.out.dao.UserDAO;
@@ -8,17 +11,21 @@ import com.example.security.TokenCreator;
 /**
  * Класс реализующий AutentificationService.
  */
+@Service
 @Loggable
 public class AuthentificationServiceImp {
 
     private final UserDAO userDAO; 
+    private final TokenCreator tokenCreator;
 
     /**
      * Конструктор класса.
      */
-    public AuthentificationServiceImp(UserDAO userDAO) {
+    @Autowired
+    public AuthentificationServiceImp(UserDAO userDAO, TokenCreator tokenCreator) {
 
         this.userDAO = userDAO;
+        this.tokenCreator = tokenCreator;
     }
 
     public String authorization(User user) throws Exception {
@@ -26,7 +33,7 @@ public class AuthentificationServiceImp {
         User realUser = userDAO.getUser(user.getLogin());
         if(realUser != null) {
             if(realUser.getPassword().equals(user.getPassword())) {
-                return TokenCreator.generateToken(user.getLogin());
+                return tokenCreator.generateToken(user.getLogin());
             }
             else {
                 throw new Exception("Неверный пароль.");
@@ -44,7 +51,7 @@ public class AuthentificationServiceImp {
         }
 
         userDAO.addUser(user.getLogin(), user.getPassword());
-        return TokenCreator.generateToken(user.getLogin());
+        return tokenCreator.generateToken(user.getLogin());
     }
 }
 

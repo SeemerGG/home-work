@@ -29,11 +29,14 @@ public class ReservationController {
 
     private final ReservationService reservService;
     private final ReservationMapper reservationMapper;
+    private final TokenCreator tokenCreator;
     
     @Autowired
-    public ReservationController(ReservationService reservationService, ReservationMapper reservationMapper) {
+    public ReservationController(ReservationService reservationService, ReservationMapper reservationMapper, TokenCreator tokenCreator) {
+
         this.reservService = reservationService;
         this.reservationMapper = reservationMapper;
+        this.tokenCreator = tokenCreator;
     }
 
     @GetMapping()
@@ -42,9 +45,9 @@ public class ReservationController {
 
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 Collection<Reservation> reservs = null;
-                String login = TokenCreator.getUserLogin(token);
+                String login = tokenCreator.getUserLogin(token);
                 switch (type) {
                     case "day":
                         reservs = reservService.filterForDate(login);
@@ -76,8 +79,8 @@ public class ReservationController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
-                reservService.deleteReservaton(id, TokenCreator.getUserLogin(token));
+            if(tokenCreator.verifyToken(token)) {
+                reservService.deleteReservaton(id, tokenCreator.getUserLogin(token));
                 return ResponseEntity.ok().build();
             }
             else {
@@ -96,7 +99,7 @@ public class ReservationController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 Reservation reservation = reservationMapper.dtoToModel(reservDto);
                 reservService.reservating(reservation);
                 return ResponseEntity.ok().build();
@@ -117,7 +120,7 @@ public class ReservationController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 Reservation reservation = reservationMapper.dtoToModel(reservDto);
                 reservService.updateTime(reservation);
                 return ResponseEntity.ok().build();

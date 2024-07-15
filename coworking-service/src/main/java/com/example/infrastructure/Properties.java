@@ -21,6 +21,9 @@ public class Properties {
     @Value("${db.password}")
     private String dbPassword;
 
+    @Value("${db.driver}")
+    private String dbDriver;
+
     @Value("${liquibase.defaultSchema}")
     private String defaultSchema;
 

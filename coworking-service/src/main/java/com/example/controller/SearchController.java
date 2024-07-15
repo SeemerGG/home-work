@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.security.TokenCreator;
 import com.example.service.SearchService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,10 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SearchController {
 
     private final SearchService searchsService;
+    private final TokenCreator tokenCreator;
 
     @Autowired
-    public SearchController(SearchService service) {
+    public SearchController(SearchService service, TokenCreator tokenCreator) {
+
         this.searchsService = service;
+        this.tokenCreator = tokenCreator;
     }
 
     @GetMapping("/place")
@@ -34,7 +38,7 @@ public class SearchController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 return ResponseEntity.ok()
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .body(new ArrayList<>(searchsService.search()));
@@ -55,7 +59,7 @@ public class SearchController {
 
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 return ResponseEntity.ok()
                                      .contentType(MediaType.APPLICATION_JSON)
                                      .body(searchsService.searchDay(date));

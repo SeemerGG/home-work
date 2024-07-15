@@ -9,8 +9,9 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.example.infrastructure.database.DBSingleton;
 import com.example.out.dao.UsersActionLogDAO;
 import com.example.security.TokenCreator;
 
@@ -18,21 +19,30 @@ import com.example.security.TokenCreator;
 
 
 @Aspect
+@Component
 public class LogHttpAspect {
 
-    private static final UsersActionLogDAO dao = new UsersActionLogDAO(DBSingleton.getInstance());
+    // private final UsersActionLogDAO dao;
+    // private final TokenCreator tokenCreator; 
 
-    @Pointcut("within(@com.example.annotation.LoggableHttp *) && execution(* *(..))")
-    private void annotatedByLoggableHttp() {}
+    // @Autowired
+    // public LogHttpAspect(UsersActionLogDAO dao, TokenCreator tokenCreator) {
 
-    @AfterReturning("annotatedByLoggableHttp() && args(req, resp)")
-    public void logHttpRequest(JoinPoint joinPoint, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String jwtToken = req.getHeader("Authorization");
-        if(jwtToken != null) { 
-            jwtToken = jwtToken.replace("Bearer ", "");
-            String login = TokenCreator.getUserLogin(jwtToken);
-            String uri = req.getRequestURI();
-            dao.add(login, LocalDateTime.now(), uri);
-        }
-    }
+    //     this.dao = dao;
+    //     this.tokenCreator = tokenCreator;
+    // }
+
+    // @Pointcut("within(@com.example.annotation.LoggableHttp *) && execution(* *(..))")
+    // private void annotatedByLoggableHttp() {}
+
+    // @AfterReturning("annotatedByLoggableHttp() && args(req, resp)")
+    // public void logHttpRequest(JoinPoint joinPoint, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    //     String jwtToken = req.getHeader("Authorization");
+    //     if(jwtToken != null) { 
+    //         jwtToken = jwtToken.replace("Bearer ", "");
+    //         String login = tokenCreator.getUserLogin(jwtToken);
+    //         String uri = req.getRequestURI();
+    //         dao.add(login, LocalDateTime.now(), uri);
+    //     }
+    // }
 }

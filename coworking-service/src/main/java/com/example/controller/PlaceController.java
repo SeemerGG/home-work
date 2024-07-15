@@ -25,16 +25,14 @@ public class PlaceController {
 
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
+    private final TokenCreator tokenCreator;
     
     @Autowired
-    public String getMethodName(@RequestParam String param) {
-        return new String();
-    }
-    
-    public PlaceController(PlaceService placeService, PlaceMapper placeMapper) {
+    public PlaceController(PlaceService placeService, PlaceMapper placeMapper, TokenCreator tokenCreator) {
 
         this.placeService = placeService;
         this.placeMapper = placeMapper;
+        this.tokenCreator = tokenCreator;
     }
 
     @GetMapping()
@@ -42,10 +40,10 @@ public class PlaceController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 return ResponseEntity.ok()
                                      .contentType(MediaType.APPLICATION_JSON)
-                                     .body(placeService.myPublication(TokenCreator.getUserLogin(token)));
+                                     .body(placeService.myPublication(tokenCreator.getUserLogin(token)));
             }
             else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -61,8 +59,8 @@ public class PlaceController {
     public ResponseEntity<?> deletePlace(@RequestHeader("Authorization") String authHeader, @RequestParam("id") int id) {
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
-                placeService.deleteMyPlace(id, TokenCreator.getUserLogin(token));
+            if(tokenCreator.verifyToken(token)) {
+                placeService.deleteMyPlace(id, tokenCreator.getUserLogin(token));
                 return ResponseEntity.status(HttpStatus.OK).build();
             }
             else {
@@ -81,7 +79,7 @@ public class PlaceController {
         
         String token = authHeader.replace("Bearer ", "");
         try {
-            if(TokenCreator.verifyToken(token)) {
+            if(tokenCreator.verifyToken(token)) {
                 Place place = placeMapper.DtoToModel(placeDTO);
                 placeService.createMyPlace(place);
                 return ResponseEntity.status(HttpStatus.OK).build();

@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.example.domain.model.Place;
 import com.example.domain.model.PlaceType;
 
@@ -15,15 +20,18 @@ import com.example.domain.model.PlaceType;
  * DAO класс для управления местами.
  * Позволяет выполнять операции с коллекцией рабочих мест, такие как получение, добавление и удаление мест.
  */
+@Repository
 public final class PlaceDAO {
 
-    public Connection connection;
+    public final Connection connection;
 
     /**
      * Конструктор.
      */
-    public PlaceDAO(Connection connection) {
-        this.connection = connection;
+    @Autowired
+    public PlaceDAO(DataSource dataSource) throws SQLException {
+        
+        this.connection = dataSource.getConnection();
     }
 
     /**

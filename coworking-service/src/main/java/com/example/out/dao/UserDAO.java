@@ -8,6 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.example.domain.model.User;
 
 
@@ -15,11 +20,15 @@ import com.example.domain.model.User;
  * Класс для доступа к данным пользователей.
  * Предоставляет методы для работы с пользователями в базе данных.
  */
+@Repository
 public final class UserDAO {
-    private Connection connection;
 
-    public UserDAO(Connection connection) {
-        this.connection = connection;
+    private final Connection connection;
+
+    @Autowired
+    public UserDAO(DataSource dataSource) throws SQLException {
+
+        this.connection = dataSource.getConnection();
     }
 
     /**

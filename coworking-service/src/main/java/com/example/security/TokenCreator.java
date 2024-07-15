@@ -3,6 +3,7 @@ package com.example.security;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -14,24 +15,26 @@ import com.example.infrastructure.Properties;
 /**
  * Класс взаимодействия с токеном.
  */
+@Component
 public class TokenCreator {
 
+    private final Algorithm algorithm;
+    private final long tokenLifetime;
+    private final String issuer;
+
     @Autowired
-    private static Properties properties;
-
-    private static final Algorithm algorithm = Algorithm.HMAC256(properties.getProperty("secretKey"));
-
-    private static final long tokenLifetime = Integer.parseInt(properties.getProperty("tokenLifetime"));
-
-
-    private static final String issuer = properties.getProperty("issuer");
+    public TokenCreator(Properties properties) {
+        this.algorithm = Algorithm.HMAC256(properties.getProperty("secretKey"));
+        this.tokenLifetime = Integer.parseInt(properties.getProperty("tokenLifetime"));
+        this.issuer = properties.getProperty("issuer");
+    }
 
     /**
      * Метод генерации JWT токена.
      * @param login Логин пользователя.
      * @return JWT токен. 
      */
-    public static String generateToken(String login) {
+    public String generateToken(String login) {
         
         String jwtToken = JWT.create()
                             .withIssuer(issuer)
@@ -47,7 +50,7 @@ public class TokenCreator {
      * @param token Токен.
      * @return True если токен не просрочен, иначе False.
      */
-    public static boolean verifyToken(String token) {
+    public boolean verifyToken(String token) {
 
         try {
             JWTVerifier verifier = JWT.require(algorithm)
@@ -70,7 +73,7 @@ public class TokenCreator {
      * @param token Токен.
      * @return True если токен не просрочен, иначе False.
      */
-    public static String getUserLogin(String token) {
+    public String getUserLogin(String token) {
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(issuer)
                 .build();

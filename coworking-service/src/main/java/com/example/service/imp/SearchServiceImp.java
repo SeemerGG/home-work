@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.annotation.Loggable;
 import com.example.domain.dto.SearchDayRepresentationDTO;
 import com.example.domain.model.Place;
@@ -18,6 +21,7 @@ import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.service.SearchService;
 
+@Service
 @Loggable
 /**
  * Класс реализующий логику поиска.
@@ -31,6 +35,7 @@ public class SearchServiceImp implements SearchService {
     private LocalTime openTime = LocalTime.of(8, 0);
     private LocalTime closeTime = LocalTime.of(22, 0);
 
+    @Autowired
     public SearchServiceImp(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
 
         this.placeDAO = placeDAO;
