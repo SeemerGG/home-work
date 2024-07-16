@@ -7,13 +7,14 @@ import com.example.annotation.Loggable;
 import com.example.domain.model.User;
 import com.example.out.dao.UserDAO;
 import com.example.security.TokenCreator;
+import com.example.service.AuthentificationService;
 
 /**
  * Класс реализующий AutentificationService.
  */
 @Service
 @Loggable
-public class AuthentificationServiceImp {
+public class AuthentificationServiceImp implements AuthentificationService {
 
     private final UserDAO userDAO; 
     private final TokenCreator tokenCreator;
@@ -28,6 +29,7 @@ public class AuthentificationServiceImp {
         this.tokenCreator = tokenCreator;
     }
 
+    @Override
     public String authorization(User user) throws Exception {
 
         User realUser = userDAO.getUser(user.getLogin());
@@ -44,6 +46,7 @@ public class AuthentificationServiceImp {
         }
     }
 
+    @Override
     public String registration(User user) throws Exception {
         
         if(userDAO.getUser(user.getLogin()) != null) {

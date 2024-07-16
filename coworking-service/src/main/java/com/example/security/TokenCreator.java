@@ -2,7 +2,7 @@ package com.example.security;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -10,7 +10,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.infrastructure.Properties;
+
+import jakarta.annotation.PostConstruct;
 
 /**
  * Класс взаимодействия с токеном.
@@ -18,15 +19,20 @@ import com.example.infrastructure.Properties;
 @Component
 public class TokenCreator {
 
-    private final Algorithm algorithm;
-    private final long tokenLifetime;
-    private final String issuer;
+    @Value("${jwt.secretKey}")
+    private String secretKey;
 
-    @Autowired
-    public TokenCreator(Properties properties) {
-        this.algorithm = Algorithm.HMAC256(properties.getProperty("secretKey"));
-        this.tokenLifetime = Integer.parseInt(properties.getProperty("tokenLifetime"));
-        this.issuer = properties.getProperty("issuer");
+    @Value("${jwt.tokenLifetime}")
+    private long tokenLifetime;
+
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    private Algorithm algorithm;
+
+    @PostConstruct
+    public void init() {
+        this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
     /**
