@@ -36,8 +36,6 @@ public class DataSourceConfig {
     @Value("${liquibase.defaultSchema}")
     private String defaultSchema;
 
-    
-
     @Bean
     public DataSource dataSource() {
         

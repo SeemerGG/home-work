@@ -6,14 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 
-
-
-/**
- * Класс хранящий объект Properties для удобного обращения к свойствам.
- */
 @Configuration
 public class PropertiesConfig {
 
+    @SuppressWarnings("null")
     @Bean
     public static PropertySourcesPlaceholderConfigurer ymlProperties() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
