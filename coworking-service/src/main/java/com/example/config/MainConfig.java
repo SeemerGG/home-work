@@ -20,6 +20,5 @@ public class MainConfig implements WebApplicationInitializer {
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
     }
-    
 
 }
