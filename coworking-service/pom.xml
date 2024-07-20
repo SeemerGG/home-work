@@ -32,6 +32,7 @@
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <swagger.version>2.1.9</swagger.version>
+        <springdoc.openApi.version>1.5.2</springdoc.openApi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -199,11 +200,13 @@
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version> 
         </dependency>
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>

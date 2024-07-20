@@ -17,13 +17,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.annotation.Loggable;
+import com.example.annotation.LoggableHttp;
 import com.example.domain.dto.ReservationDTO;
 import com.example.domain.model.Reservation;
 import com.example.mapper.ReservationMapper;
 import com.example.security.TokenCreator;
 import com.example.service.ReservationService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
+@Tag(name = "Контроллер управления бронированиями.", description = "Задает методы управления бронированиями.")
+@LoggableHttp
+@Loggable
 @RequestMapping("/reservations")
 public class ReservationController {
 
@@ -39,6 +52,25 @@ public class ReservationController {
         this.tokenCreator = tokenCreator;
     }
 
+    @Operation(summary = "Возвращает все бронирования зарегистрированные пользователем.", tags = "getReservations")
+    @ApiResponses( value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Данные успешно отправлены.",
+            content = {
+                @Content(
+                        mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = ReservationDTO.class)))
+        }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Ошибка авторизации."
+        ),
+        @ApiResponse(
+            responseCode = "501",
+            description = "Возникла ошибка."
+        )
+    })
     @GetMapping()
     public ResponseEntity<?> getReservations(@RequestHeader("Authorization") String authHeader, 
     @RequestParam("type") String type) {
@@ -73,6 +105,20 @@ public class ReservationController {
         }
     }
 
+    @Operation(summary = "Удаляет бронирование зарегистрированное пользователем.", tags = "deleteReservation")
+    @ApiResponses( value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Данные успешно удалены."),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Ошибка авторизации."
+        ),
+        @ApiResponse(
+            responseCode = "501",
+            description = "Возникла ошибка."
+        )
+    })
     @DeleteMapping()
     public ResponseEntity<?> deleteReservation(@RequestHeader("Authorization") String authHeader, 
     @RequestParam("id") int id) {
@@ -93,6 +139,20 @@ public class ReservationController {
         }
     }
 
+    @Operation(summary = "Создает новое бронирование.", tags = "addReservation")
+    @ApiResponses( value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Данные успешно отправлены."),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Ошибка авторизации."
+        ),
+        @ApiResponse(
+            responseCode = "501",
+            description = "Возникла ошибка."
+        )
+    })
     @PostMapping()
     public ResponseEntity<?> createReservation(@RequestHeader("Authorization") String authHeader, 
     @RequestBody ReservationDTO reservDto) {
@@ -114,6 +174,20 @@ public class ReservationController {
         }
     }
 
+    @Operation(summary = "Изменяет время бронирования бронирования.", tags = "updateReservation")
+    @ApiResponses( value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Данные успешно отправлены."),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Ошибка авторизации."
+        ),
+        @ApiResponse(
+            responseCode = "501",
+            description = "Возникла ошибка."
+        )
+    })
     @PutMapping("update/time")
     public ResponseEntity<?> updateTime(@RequestHeader("Authorization") String authHeader, 
     @RequestBody ReservationDTO reservDto) {
