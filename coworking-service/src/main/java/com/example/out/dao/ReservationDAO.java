@@ -11,25 +11,33 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.example.domain.model.Reservation;
+
 
 import java.sql.Date;
 import java.sql.Time;
-
-import com.example.model.Reservation;
 
 /**
  * Класс для доступа к данным о бронированиях.
  * Позволяет управлять бронированиями мест в системе.
  */
+@Repository
 public final class ReservationDAO {
 
-    private Connection connection;
+    private final Connection connection;
     
     /**
      * Конструктор класса. 
      */
-    public ReservationDAO(Connection connection) {
-        this.connection = connection;
+    @Autowired
+    public ReservationDAO(DataSource dataSource) throws SQLException {
+
+        this.connection = dataSource.getConnection();
     }
 
     /**

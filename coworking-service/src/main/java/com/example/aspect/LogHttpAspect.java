@@ -2,37 +2,38 @@ package com.example.aspect;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.example.in.security.TokenCreator;
-import com.example.infrastructure.database.DBSingleton;
 import com.example.out.dao.UsersActionLogDAO;
+import com.example.security.TokenCreator;
 
-
-
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Aspect
+@Component
+@RequiredArgsConstructor
 public class LogHttpAspect {
 
-    private static final UsersActionLogDAO dao = new UsersActionLogDAO(DBSingleton.getInstance());
-
+    private final UsersActionLogDAO dao;
+    private final TokenCreator tokenCreator; 
+  
     @Pointcut("within(@com.example.annotation.LoggableHttp *) && execution(* *(..))")
-    private void annotatedByLoggableHttp() {}
+    public void annotatedByLoggableHttp() {}
 
-    @AfterReturning("annotatedByLoggableHttp() && args(req, resp)")
-    public void logHttpRequest(JoinPoint joinPoint, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String jwtToken = req.getHeader("Authorization");
-        if(jwtToken != null) { 
-            jwtToken = jwtToken.replace("Bearer ", "");
-            String login = TokenCreator.getUserLogin(jwtToken);
-            String uri = req.getRequestURI();
-            dao.add(login, LocalDateTime.now(), uri);
-        }
+    @Before("annotatedByLoggableHttp()")
+    public void logHttpRequest(JoinPoint joinPoint) throws Exception {
+        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        System.out.println(req + "FFFFFFFFFFFF");
+        String token = req.getHeader("Authorization").replace("Bearer ", "");
+        String login = tokenCreator.getUserLogin(token);
+        String url = req.getRequestURI();
+        dao.add(login, LocalDateTime.now(), url);
     }
 }
