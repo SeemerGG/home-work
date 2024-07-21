@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.domain.model.Place;
@@ -21,14 +20,13 @@ import com.example.domain.model.PlaceType;
  * Позволяет выполнять операции с коллекцией рабочих мест, такие как получение, добавление и удаление мест.
  */
 @Repository
-public final class PlaceDAO {
+public class PlaceDAO {
 
     public final Connection connection;
 
     /**
      * Конструктор.
      */
-    @Autowired
     public PlaceDAO(DataSource dataSource) throws SQLException {
         
         this.connection = dataSource.getConnection();

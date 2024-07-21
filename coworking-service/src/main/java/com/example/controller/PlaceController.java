@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Контроллер управления местами.", description = "Задает методы управления местами.")
 @LoggableHttp
 @Loggable
@@ -39,14 +40,6 @@ public class PlaceController {
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
     private final TokenCreator tokenCreator;
-    
-    @Autowired
-    public PlaceController(PlaceService placeService, PlaceMapper placeMapper, TokenCreator tokenCreator) {
-
-        this.placeService = placeService;
-        this.placeMapper = placeMapper;
-        this.tokenCreator = tokenCreator;
-    }
 
     @Operation(summary = "Возвращает все места зарегистрированные пользователем.", tags = "getPlaces")
     @ApiResponses( value = {

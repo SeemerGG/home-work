@@ -3,7 +3,6 @@ package com.example.controller;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
+@RequiredArgsConstructor
 @LoggableHttp
 @Loggable
 @RequestMapping("/search")
@@ -38,13 +39,6 @@ public class SearchController {
 
     private final SearchService searchsService;
     private final TokenCreator tokenCreator;
-
-    @Autowired
-    public SearchController(SearchService service, TokenCreator tokenCreator) {
-
-        this.searchsService = service;
-        this.tokenCreator = tokenCreator;
-    }
 
     @Operation(summary = "Возвращает все места зарегистрированные на платформе.", tags = "getAllPlaces")
     @ApiResponses( value = {

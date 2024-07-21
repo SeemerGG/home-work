@@ -1,12 +1,11 @@
 package com.example.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
 
 import com.example.domain.dto.ReservationDTO;
 import com.example.domain.model.Reservation;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = "spring")
 public interface ReservationMapper {
 
     Reservation dtoToModel(ReservationDTO reservationDto);

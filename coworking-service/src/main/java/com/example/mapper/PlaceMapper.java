@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 
 import com.example.domain.dto.PlaceDTO;
 import com.example.domain.model.Place;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = "spring")
 public interface PlaceMapper {
 
     @Mapping(target = "placeType", expression = "java(place.getPlaceType().name())")

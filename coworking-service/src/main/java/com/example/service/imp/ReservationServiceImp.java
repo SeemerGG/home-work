@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.annotation.Loggable;
@@ -14,8 +13,11 @@ import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.service.ReservationService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Loggable
+@RequiredArgsConstructor
 /**
  * Класс реализующий интерфейс ReservationService.
  */
@@ -23,14 +25,6 @@ public class ReservationServiceImp implements ReservationService{
 
     private final PlaceDAO placeDAO;
     private final ReservationDAO reservationDAO;
-
-
-    @Autowired
-    public ReservationServiceImp(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
-
-        this.placeDAO = placeDAO;
-        this.reservationDAO = reservationDAO;
-    }
 
     @Override
     public boolean reservating(Reservation res) throws Exception {

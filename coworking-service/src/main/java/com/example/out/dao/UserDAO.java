@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.domain.model.User;
@@ -21,11 +20,10 @@ import com.example.domain.model.User;
  * Предоставляет методы для работы с пользователями в базе данных.
  */
 @Repository
-public final class UserDAO {
+public class UserDAO {
 
     private final Connection connection;
 
-    @Autowired
     public UserDAO(DataSource dataSource) throws SQLException {
 
         this.connection = dataSource.getConnection();

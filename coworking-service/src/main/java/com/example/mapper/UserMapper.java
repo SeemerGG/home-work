@@ -2,14 +2,13 @@ package com.example.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
 import com.example.domain.dto.UserDTO;
 import com.example.domain.model.User;
 import com.example.security.PasswordHashing;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mapping(target = "login", source = "userDTO.login")

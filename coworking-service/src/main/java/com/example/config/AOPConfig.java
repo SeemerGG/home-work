@@ -1,10 +1,10 @@
-package com.example.config;
+// package com.example.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@Configuration
-@EnableAspectJAutoProxy
-public class AOPConfig {
+// @Configuration
+// @EnableAspectJAutoProxy
+// public class AOPConfig {
 
-}
+// }

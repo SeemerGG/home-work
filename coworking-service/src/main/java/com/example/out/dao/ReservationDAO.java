@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.domain.model.Reservation;
@@ -27,14 +26,13 @@ import java.sql.Time;
  * Позволяет управлять бронированиями мест в системе.
  */
 @Repository
-public final class ReservationDAO {
+public class ReservationDAO {
 
     private final Connection connection;
     
     /**
      * Конструктор класса. 
      */
-    @Autowired
     public ReservationDAO(DataSource dataSource) throws SQLException {
 
         this.connection = dataSource.getConnection();

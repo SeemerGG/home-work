@@ -1,6 +1,5 @@
 package com.example.service.imp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.annotation.Loggable;
@@ -9,25 +8,18 @@ import com.example.out.dao.UserDAO;
 import com.example.security.TokenCreator;
 import com.example.service.AuthentificationService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Класс реализующий AutentificationService.
  */
 @Service
 @Loggable
+@RequiredArgsConstructor
 public class AuthentificationServiceImp implements AuthentificationService {
 
     private final UserDAO userDAO; 
     private final TokenCreator tokenCreator;
-
-    /**
-     * Конструктор класса.
-     */
-    @Autowired
-    public AuthentificationServiceImp(UserDAO userDAO, TokenCreator tokenCreator) {
-
-        this.userDAO = userDAO;
-        this.tokenCreator = tokenCreator;
-    }
 
     @Override
     public String authorization(User user) throws Exception {

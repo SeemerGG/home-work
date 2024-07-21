@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,7 +18,6 @@ public class UsersActionLogDAO {
 
     private Connection connection;
 
-    @Autowired
     public UsersActionLogDAO(DataSource dataSource) throws SQLException {
 
         this.connection = dataSource.getConnection();

@@ -3,7 +3,6 @@ package com.example.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Контроллер управления бронированиями.", description = "Задает методы управления бронированиями.")
 @LoggableHttp
 @Loggable
@@ -43,14 +44,6 @@ public class ReservationController {
     private final ReservationService reservService;
     private final ReservationMapper reservationMapper;
     private final TokenCreator tokenCreator;
-    
-    @Autowired
-    public ReservationController(ReservationService reservationService, ReservationMapper reservationMapper, TokenCreator tokenCreator) {
-
-        this.reservService = reservationService;
-        this.reservationMapper = reservationMapper;
-        this.tokenCreator = tokenCreator;
-    }
 
     @Operation(summary = "Возвращает все бронирования зарегистрированные пользователем.", tags = "getReservations")
     @ApiResponses( value = {

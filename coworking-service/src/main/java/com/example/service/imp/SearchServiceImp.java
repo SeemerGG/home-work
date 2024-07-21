@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.annotation.Loggable;
@@ -21,8 +20,11 @@ import com.example.out.dao.PlaceDAO;
 import com.example.out.dao.ReservationDAO;
 import com.example.service.SearchService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Loggable
+@RequiredArgsConstructor
 /**
  * Класс реализующий логику поиска.
  */
@@ -34,13 +36,6 @@ public class SearchServiceImp implements SearchService {
     //Это наверное  должно быть в классе с константами приложения
     private LocalTime openTime = LocalTime.of(8, 0);
     private LocalTime closeTime = LocalTime.of(22, 0);
-
-    @Autowired
-    public SearchServiceImp(PlaceDAO placeDAO, ReservationDAO reservationDAO) {
-
-        this.placeDAO = placeDAO;
-        this.reservationDAO = reservationDAO;
-    }
 
     @Override
     public Collection<Place> search() throws Exception {
