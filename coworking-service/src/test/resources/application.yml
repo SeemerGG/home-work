@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/admin?currentSchema=workschema
+    username: admin
+    password: admin321
+
+  liquibase:
+    defaultSchema: workschema
+    liquibaseSchema: liquibaseschema
+    change-log: classpath:db/changelog/changelog.xml
+
+  springdoc: 
+    swagger-ui:
+      path: /swagger-ui.html
+
+jwt:
+  secretKey: 5f08c611830bbfd9cac714b267ac221b9ba3b3815d7bc9f9ed53c838eda88e2e9e576166ec00ddc73e91cd838541010670cc3dfdbebfb4b1d857e43658f5de01
+  issuer: Coworking-service
+  tokenLifetime: 43200000
+  
+container:
+  version: postgres:12.19-alpine3.20

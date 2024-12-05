@@ -2,18 +2,25 @@ package com.example.out.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+
+import javax.sql.DataSource;
+
+import org.springframework.stereotype.Repository;
 
 /**
  * Класс для записи действий пользователей.
  */
+@Repository
 public class UsersActionLogDAO {
 
     private Connection connection;
 
-    public UsersActionLogDAO(Connection connection) {
-        this.connection = connection;
+    public UsersActionLogDAO(DataSource dataSource) throws SQLException {
+
+        this.connection = dataSource.getConnection();
     }
 
     /**

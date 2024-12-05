@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.example.domain.model.Reservation;
+
 public class ReservationTest {
 
     private Reservation reservation;
